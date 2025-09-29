@@ -1,0 +1,396 @@
+﻿@{
+    ViewData["Title"] = "Super Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Optional if handled globally
+}
+
+
+<style>
+    .modal-content {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+    }
+
+    .nav-tabs .nav-link {
+        cursor: pointer;
+    }
+
+    .is-invalid {
+        border-color: red;
+    }
+
+
+    /* Modal custom styles */
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-header-custom {
+        background: linear-gradient(3deg, #3d1b28, #8d7e89);
+        color: #fff;
+    }
+
+
+    .close-white {
+        color: white;
+        opacity: 1;
+        background-color: #9d2a2a;
+        font-size: 15px;
+        border: red;
+    }
+
+   
+
+    .modal-footer-custom {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+        .modal-footer-custom .btn {
+            min-width: 100px;
+        }
+
+    /* Form validation */
+    .is-invalid {
+        border-color: red;
+    }
+
+    /* Tabs */
+    .nav-tabs .nav-link.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+    }
+
+    .nav-tabs .nav-link {
+        cursor: pointer;
+    }
+    /* Custom wider modal */
+    .modal-xl-custom {
+        min-width: 50%;
+        min-height: 80%;
+    }
+
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    .sidebar {
+        height: 100vh;
+        background-color: #1f2d3d;
+        padding-top: 1rem;
+        color: white;
+    }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+        }
+
+            .sidebar a:hover {
+                background-color: #3c4b5f;
+            }
+
+    .dashboard-content {
+        padding: 20px;
+    }
+
+    .summary-box {
+        height: 150px;
+    }
+
+    .summary-title {
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
+
+    .summary-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center mb-4">Super Admin</h4>
+            <a href="#">Dashboard</a>
+            <a href="#" id="userList">All Users</a>
+            <a href="#">System Logs</a>
+            <a href="#">Manage Roles</a>
+            <a href="#">Global Settings</a>
+          @*   <a href="#">Logout</a> *@
+            <a href="#" id="logoutLink">Logout</a>
+
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10 dashboard-content">
+            <h3 class="mb-4">Welcome, Super Admin 👑</h3>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card shadow-sm summary-box">
+                        <div class="card-body">
+                            <div class="summary-title">Total Users</div>
+                            <div class="summary-value text-primary">5,431</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm summary-box">
+                        <div class="card-body">
+                            <div class="summary-title">Admins Created</div>
+                            <div class="summary-value text-success">63</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm summary-box">
+                        <div class="card-body">
+                            <div class="summary-title">Active Logs (24h)</div>
+                            <div class="summary-value text-danger">1,048</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <h5 class="mb-3">Recent Admin Activity</h5>
+            <ul class="list-group">
+                <li class="list-group-item">🧾 Admin `john_admin` updated user roles</li>
+                <li class="list-group-item">⚙️ Settings updated by `config_master`</li>
+                <li class="list-group-item">📁 Backup created at 02:15 AM</li>
+            </ul>
+
+            <div id="targetContainer">
+                <!-- The rendered HTML (user list view) will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    @* <div class="modal-dialog modal-lg modal-dialog-centered" role="document"> *@
+        <div class="modal-dialog modal-dialog-centered modal-xl-custom" role="document">
+
+        <div class="modal-content rounded-3">
+            <div class="modal-header modal-header-custom">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="close close-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editUserForm">
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" id="editTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#tab1" data-toggle="tab">User Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab2" data-toggle="tab">Role</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab3" data-toggle="tab">Address</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab4" data-toggle="tab">All Inputs</a>
+                        </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Tab 1 -->
+                        <div class="tab-pane fade show active" id="tab1">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="usermail">Email</label>
+                                <input type="email" class="form-control" id="usermail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userpassword">Password</label>
+                                <input type="password" class="form-control" id="userpassword" required>
+                            </div>
+                            <div class="modal-footer-custom">
+                                <button type="button" class="btn btn-primary next-tab">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2 -->
+                        <div class="tab-pane fade" id="tab2">
+                            <div class="form-group">
+                                <label for="userrole">Role</label>
+                                <select class="form-control" id="userrole" required>
+                                    <option value="">-- Select Role --</option>
+                                    <option value="SuperAdmin">SuperAdmin</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="User">User</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer-custom">
+                                <button type="button" class="btn btn-secondary prev-tab">Back</button>
+                                <button type="button" class="btn btn-primary next-tab">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3 -->
+                        <div class="tab-pane fade" id="tab3">
+                            <div class="form-group">
+                                <label for="useraddress">Address</label>
+                                <input type="text" class="form-control" id="useraddress" required>
+                            </div>
+                            <div class="modal-footer-custom">
+                                <button type="button" class="btn btn-secondary prev-tab">Back</button>
+                                <button type="submit" class="btn btn-success">Update</button>
+                                <button type="button" class="btn btn-danger cancel-button" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+
+                        <!-- Tab 4 -->
+                        
+                        <div class="tab-pane fade" id="tab4">
+                            <div class="form-group">
+                                <label for="textInput">Text Input</label>
+                                <input type="text" class="form-control" id="textInput" placeholder="Enter text">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="passwordInput">Password</label>
+                                <input type="password" class="form-control" id="passwordInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="emailInput">Email</label>
+                                <input type="email" class="form-control" id="emailInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="urlInput">URL</label>
+                                <input type="url" class="form-control" id="urlInput" placeholder="https://example.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="telInput">Telephone</label>
+                                <input type="tel" class="form-control" id="telInput" placeholder="123-456-7890">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="numberInput">Number</label>
+                                <input type="number" class="form-control" id="numberInput" min="1" max="10">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="rangeInput">Range</label>
+                                <input type="range" class="form-control-range" id="rangeInput" min="0" max="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dateInput">Date</label>
+                                <input type="date" class="form-control" id="dateInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="datetimeInput">Datetime Local</label>
+                                <input type="datetime-local" class="form-control" id="datetimeInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="timeInput">Time</label>
+                                <input type="time" class="form-control" id="timeInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="monthInput">Month</label>
+                                <input type="month" class="form-control" id="monthInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weekInput">Week</label>
+                                <input type="week" class="form-control" id="weekInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="colorInput">Color Picker</label>
+                                <input type="color" class="form-control" id="colorInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fileInput">File Upload</label>
+                                <input type="file" class="form-control-file" id="fileInput">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Gender (Radio)</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="radioMale" value="male">
+                                    <label class="form-check-label" for="radioMale">Male</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="radioFemale" value="female">
+                                    <label class="form-check-label" for="radioFemale">Female</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Interests (Checkboxes)</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="interestCoding" value="Coding">
+                                    <label class="form-check-label" for="interestCoding">Coding</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="interestMusic" value="Music">
+                                    <label class="form-check-label" for="interestMusic">Music</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="textarea">Textarea</label>
+                                <textarea class="form-control" id="textarea" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="anchorLink">Anchor Tag</label><br>
+                                <a href="https://openai.com" target="_blank" id="anchorLink" class="btn btn-outline-primary">OpenAI Link</a>
+                            </div>
+
+                            <div class="modal-footer-custom">
+                                <button type="button" class="btn btn-secondary prev-tab">Back</button>
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="~/js/login.js"></script>
+<script src="~/js/user.js"></script>

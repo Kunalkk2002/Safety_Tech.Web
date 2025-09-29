@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BaseOutputPath>D:\Sagar\MVC Template Web App\Safety_Tech.Web\Safety_Tech.Web\bin\Debug\net9.0</BaseOutputPath>
+    <UserSecretsId>c3433a88-7d35-4141-ad50-87fc6bd85bb9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="Azure.Core" Version="1.46.2" />
+    <PackageReference Include="Azure.Identity" Version="1.14.0" />
+    <PackageReference Include="DotNetOpenAuth.AspNet" Version="4.3.4.13329" />
+    <PackageReference Include="DotNetOpenAuth.Core" Version="4.3.4.13329" />
+    <PackageReference Include="Facebook" Version="7.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="NLog" Version="5.5.0" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.5.0" />
+    <PackageReference Include="TweetinviAPI" Version="5.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Safety_Tech.DTOs\Safety_Tech.DTOs.csproj" />
+    <ProjectReference Include="..\Safety_Tech.Models\Safety_Tech.Models.csproj" />
+    <ProjectReference Include="..\Safety_Tech.Services\Safety_Tech.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Image\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,48 @@
+﻿
+@model Safety_Tech.DTOs.UserDTOs.UpdateUserDto
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit User</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Edit User</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("UpdateUser", "User", FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.UserId)
+
+                    <div class="form-group">
+                        <label for="UserMail">Email:</label>
+                        @Html.TextBoxFor(m => m.UserMail, new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="UserName">Name:</label>
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input" })
+                            Active
+                        </label>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Update User</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

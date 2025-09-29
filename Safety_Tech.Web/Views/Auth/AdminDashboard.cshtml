@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // or omit if already handled globally
+}
+
+<!-- Bootstrap CDN (if not already in layout) -->
+
+
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    .sidebar {
+        height: 100vh;
+        background-color: #343a40;
+        padding-top: 1rem;
+        color: white;
+    }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 20px;
+        }
+
+            .sidebar a:hover {
+                background-color: #495057;
+            }
+
+    .dashboard-content {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-weight: 600;
+    }
+
+    .task-box {
+        height: 150px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center">Admin Panel</h4>
+            <hr />
+            <a href="#">Dashboard</a>
+            <a href="#">Users</a>
+            <a href="#">Reports</a>
+            <a href="#">Settings</a>
+            <a href="#" id="logoutLink">Logout</a>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10 dashboard-content">
+            <h2 class="mb-4">Welcome, Admin 👋</h2>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card shadow-sm task-box">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <p class="card-text display-6 text-primary">1,204</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm task-box">
+                        <div class="card-body">
+                            <h5 class="card-title">New Signups</h5>
+                            <p class="card-text display-6 text-success">76</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm task-box">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Requests</h5>
+                            <p class="card-text display-6 text-warning">19</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <h4 class="mt-4">Recent Activity</h4>
+            <ul class="list-group mt-2">
+                <li class="list-group-item">User JohnDoe created a new account</li>
+                <li class="list-group-item">Report exported by Admin02</li>
+                <li class="list-group-item">3 users deleted by SuperAdmin</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="~/js/login.js"></script>

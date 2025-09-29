@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "User Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // or remove if handled globally
+}
+
+<style>
+    body {
+        background-color: #eef2f7;
+    }
+
+    .sidebar {
+        height: 100vh;
+        background-color: #007bff;
+        padding-top: 1rem;
+        color: white;
+    }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 20px;
+        }
+
+            .sidebar a:hover {
+                background-color: #0056b3;
+            }
+
+    .dashboard-content {
+        padding: 20px;
+    }
+
+    .welcome-box {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .info-card {
+        height: 140px;
+    }
+
+    .activity-list li {
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center">User Panel</h4>
+            <hr />
+            <a href="#">Dashboard</a>
+            <a href="#">My Profile</a>
+            <a href="#">My Orders</a>
+            <a href="#">Notifications</a>
+            <a href="#" id="logoutLink">Logout</a>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10 dashboard-content">
+            <div class="welcome-box mb-4">
+                <h3>Welcome back, User 👋</h3>
+                <p class="text-muted">Here’s what’s happening with your account today.</p>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card shadow-sm info-card">
+                        <div class="card-body">
+                            <h6 class="card-title">Current Plan</h6>
+                            <p class="card-text text-primary fs-5">Premium</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm info-card">
+                        <div class="card-body">
+                            <h6 class="card-title">Account Status</h6>
+                            <p class="card-text text-success fs-5">Active</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm info-card">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Orders</h6>
+                            <p class="card-text text-warning fs-5">15</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="mb-3">Recent Activity</h5>
+            <ul class="list-group activity-list">
+                <li class="list-group-item">🛒 Order #1001 was successfully placed</li>
+                <li class="list-group-item">✏️ Profile information updated</li>
+                <li class="list-group-item">📩 Received new message from support</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="~/js/login.js"></script>

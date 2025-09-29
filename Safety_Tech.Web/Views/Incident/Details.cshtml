@@ -1,0 +1,181 @@
+﻿@using Safety_Tech.DTOs.incidents;
+@model List<Incidents>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Health &amp; Safety Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // Indigo 500
+                        "background-light": "#F3F4F6", // Gray 100
+                        "background-dark": "#1F2937", // Gray 800
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151", // Gray 700
+                        "text-light": "#111827", // Gray 900
+                        "text-dark": "#F9FAFB", // Gray 50
+                        "text-secondary-light": "#6B7280", // Gray 500
+                        "text-secondary-dark": "#9CA3AF", // Gray 400
+                        "danger": "#EF4444" // Red 500
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'lg': '0.75rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #4B5563; /* Gray 600 */
+            font-size: 1.2rem !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+    <div class="p-6 md:p-8">
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                    <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Recent Incidents</h3>
+                    <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                        <button class="text-primary hover:underline text-sm font-medium">View all</button>
+                    </div>
+                </div>
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <!-- Camera -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-primary text-white hover:bg-primary/90">
+                        Camera
+                    </button>
+                    <!-- Incident Type -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Incident Type
+                    </button>
+                    <!-- From Date -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        From Date
+                    </button>
+                    <!-- To Date -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        To Date
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
+                                <th class="py-3 px-4 font-medium">Label</th>
+                                <th class="py-3 px-4 font-medium">Confidence</th>
+                                <th class="py-3 px-4 font-medium">Date</th>
+                                <th class="py-3 px-4 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                            @foreach (var item in Model)
+                            {
+                                <tr class="text-sm">
+                                    <!-- Type (Label in your model) -->
+                                    <td class="py-3 px-4">@item.Label</td>
+
+                                    <!-- Severity (map Confidence to severity levels) -->
+                                    <td class="py-3 px-4">
+                                        @item.Confidence
+                                    </td>
+
+                                    <!-- Date -->
+                                    <td class="py-3 px-4">@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+
+                                    <!-- Status (example: approve if confidence > 0.8, else pending) -->
+                                    <td class="py-3 px-4">
+                                        <div class="flex gap-2">
+                                            <form asp-controller="Incident" asp-action="Approve" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="incidentId" value="@item.Id" />
+                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-green-600 text-white hover:bg-green-700">Approve</button>
+                                            </form>
+                                            <form asp-controller="Incident" asp-action="Reject" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="incidentId" value="@item.Id" />
+                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-red-600 text-white hover:bg-red-700">Reject</button>
+                                            </form>
+                                            <button type="button" onclick="showImage('@Url.Action("GetImage", "Incedent", new { imagePath = item.Image })', '@item.Label')" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                    </table>
+                </div>
+            </div>
+        </main>
+        <footer class="mt-8 flex justify-between items-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
+            <div class="flex items-center">
+            </div>
+        </footer>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center">
+                <img id="modalImage" src="" alt="Incident Image" class="max-w-full max-h-[70vh] mx-auto rounded-lg shadow-lg" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4='; this.alt='Image not found';">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showImage(imagePath, label) {
+            document.getElementById('modalImage').src = imagePath;
+            document.getElementById('modalTitle').textContent = 'Incident: ' + label;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+﻿
+
+
+@model Safety_Tech.DTOs.UserDTOs.AddUserDto
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add User</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Add User</h2>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("AddUser", "User", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        <label for="UserMail">Email:</label>
+                        @Html.TextBoxFor(m => m.UserMail, new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="UserName">Name:</label>
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input" })
+                            Active
+                        </label>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                        <a href="@Url.Action("GetAllUser", "User")" class="btn btn-secondary">Back to User List</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

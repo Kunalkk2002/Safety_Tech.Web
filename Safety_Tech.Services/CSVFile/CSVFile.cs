@@ -11,6 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Safety_Tech.Models.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.ComponentModel;
+using OfficeOpenXml;
+using LicenseContext = OfficeOpenXml.LicenseContext;
+using ClosedXML.Excel;
 
 namespace Safety_Tech.Services.CSVFile
 {
@@ -40,70 +44,94 @@ namespace Safety_Tech.Services.CSVFile
         /// <exception cref="ArgumentException">Thrown when source or processed folder paths are invalid.</exception>
         public async Task<int> ProcessCsvFilesAsync(string sourceFolderPath, string processedFolderPath, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(sourceFolderPath)) throw new ArgumentException("Source folder path is required.");
-            if (string.IsNullOrWhiteSpace(processedFolderPath)) throw new ArgumentException("Processed folder path is required.");
-
-            if (!Directory.Exists(sourceFolderPath)) return 0;
-            Directory.CreateDirectory(processedFolderPath);
-
-            var csvFiles = Directory.GetFiles(sourceFolderPath, "*.csv", SearchOption.TopDirectoryOnly);
             var totalSaved = 0;
-
-            foreach (var file in csvFiles)
+            try
             {
-                var items = await ReadCsvAsync(file, cancellationToken);
+                if (string.IsNullOrWhiteSpace(sourceFolderPath)) throw new ArgumentException("Source folder path is required.");
+                if (string.IsNullOrWhiteSpace(processedFolderPath)) throw new ArgumentException("Processed folder path is required.");
 
-                if (items.Count > 0)
+                if (!Directory.Exists(sourceFolderPath)) return 0;
+                Directory.CreateDirectory(processedFolderPath);
+
+                var csvFiles = Directory.EnumerateFiles(sourceFolderPath, "*.*", SearchOption.TopDirectoryOnly)
+                            .Where(f => f.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                                     || f.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase));
+
+                
+
+                foreach (var file in csvFiles)
                 {
-                    try
-                    {
-                        // Prepare output image folder alongside processed folder
-                        var processedImagesFolder = Path.Combine(processedFolderPath, "Images");
-                        Directory.CreateDirectory(processedImagesFolder);
+                    var items = await ReadFileAsync(file, cancellationToken);
 
-                        // Render and update image paths
-                        foreach (var item in items)
+                    if (items.Count > 0)
+                    {
+                        try
                         {
-                            var imagePath = item.Image;
-                            if (!string.IsNullOrWhiteSpace(imagePath))
+                            // Prepare output image folder alongside processed folder
+                            var processedImagesFolder = Path.Combine(processedFolderPath, "Images");
+                            Directory.CreateDirectory(processedImagesFolder);
+
+                            // Render and update image paths
+                            //foreach (var item in items)
+                            //{
+                            //    var imagePath = item.Image;
+                            //    if (!string.IsNullOrWhiteSpace(imagePath))
+                            //    {
+                            //        if (!Path.IsPathRooted(imagePath))
+                            //        {
+                            //            var csvDir = Path.GetDirectoryName(file) ?? string.Empty;
+                            //            imagePath = Path.Combine(csvDir, imagePath);
+                            //        }
+
+                            //        var savedPath = DrawBoundingBoxAndSave(
+                            //            imagePath,
+                            //            item.XMin, item.YMin, item.XMax, item.YMax,
+                            //            processedImagesFolder);
+
+                            //        if (!string.IsNullOrWhiteSpace(savedPath))
+                            //        {
+                            //            item.Image = savedPath;
+                            //        }
+                            //    }
+                            //}
+
+                            try
                             {
-                                if (!Path.IsPathRooted(imagePath))
-                                {
-                                    var csvDir = Path.GetDirectoryName(file) ?? string.Empty;
-                                    imagePath = Path.Combine(csvDir, imagePath);
-                                }
+                                using var scope = _scopeFactory.CreateScope();
+                                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataContext>();
+                                await dbContext.Incidents.AddRangeAsync(items, cancellationToken);
+                                totalSaved += await dbContext.SaveChangesAsync(cancellationToken);
+            return totalSaved;
 
-                                var savedPath = DrawBoundingBoxAndSave(
-                                    imagePath,
-                                    item.XMin, item.YMin, item.XMax, item.YMax,
-                                    processedImagesFolder);
-
-                                if (!string.IsNullOrWhiteSpace(savedPath))
-                                {
-                                    item.Image = savedPath;
-                                }
                             }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+
                         }
-
-                        using var scope = _scopeFactory.CreateScope();
-                        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataContext>();
-                        await dbContext.Incidents.AddRangeAsync(items, cancellationToken);
-                        totalSaved += await dbContext.SaveChangesAsync(cancellationToken);
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
                     }
-                    catch (Exception ex)
+
+                    var destination = Path.Combine(processedFolderPath, Path.GetFileName(file));
+                    if (File.Exists(destination))
                     {
-                        Console.WriteLine(ex.ToString());
+                        File.Delete(destination);
                     }
+                    File.Move(file, destination);
                 }
 
-                var destination = Path.Combine(processedFolderPath, Path.GetFileName(file));
-                if (File.Exists(destination))
-                {
-                    File.Delete(destination);
-                }
-                File.Move(file, destination);
+
             }
+            catch (Exception ex)
+            {
 
+            }
+           
             return totalSaved;
         }
 
@@ -113,39 +141,74 @@ namespace Safety_Tech.Services.CSVFile
         /// <param name="filePath">The path to the CSV file.</param>
         /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
         /// <returns>A list of <see cref="Incidents"/> objects.</returns>
-        private static async Task<List<Incidents>> ReadCsvAsync(string filePath, CancellationToken cancellationToken)
+        private static async Task<List<Incidents>> ReadFileAsync(string filePath, CancellationToken cancellationToken)
         {
             var results = new List<Incidents>();
+            var extension = Path.GetExtension(filePath).ToLower();
 
-            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var reader = new StreamReader(stream, Encoding.UTF8);
-
-            // Read header
-            var headerLine = await reader.ReadLineAsync();
-            if (headerLine == null) return results;
-
-            // Process lines
-            while (!reader.EndOfStream)
+            if (extension == ".csv")
             {
-                var line = await reader.ReadLineAsync();
-                if (string.IsNullOrWhiteSpace(line)) continue;
+                using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using var reader = new StreamReader(stream, Encoding.UTF8);
 
-                var columns = SplitCsvLine(line);
-                // Expected columns: image,label,confidence,xmin,ymin,xmax,ymax
-                if (columns.Length < 7) continue;
+                // Read header
+                var headerLine = await reader.ReadLineAsync();
+                if (headerLine == null) return results;
 
-                var entity = new Incidents
+                while (!reader.EndOfStream)
                 {
-                    Image = columns[0],
-                    Label = columns[1],
-                    Confidence = ParseDouble(columns[2]),
-                    XMin = ParseDouble(columns[3]),
-                    YMin = ParseDouble(columns[4]),
-                    XMax = ParseDouble(columns[5]),
-                    YMax = ParseDouble(columns[6])
-                };
+                    var line = await reader.ReadLineAsync();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
 
-                results.Add(entity);
+                    var columns = line.Split(',');
+
+                    if (columns.Length < 7) continue;
+
+                    int no = int.TryParse(columns[0], out var tempNo) ? tempNo : 0;
+                    DateTime timestamp = DateTime.TryParse(columns[3], out var tempDate) ? tempDate : DateTime.MinValue;
+
+                    results.Add(new Incidents
+                    {
+                        No = no,
+                        CameraName = columns[1]?.Trim() ?? string.Empty,
+                        CameraId = columns[2]?.Trim() ?? string.Empty,
+                        Timestamp = timestamp,
+                        TrackId = columns[4]?.Trim() ?? string.Empty,
+                        MissingLabels = columns[5]?.Trim() ?? string.Empty,
+                        ViolationType = columns[6]?.Trim() ?? string.Empty
+                    });
+                }
+            }
+            else if (extension == ".xlsx")
+            {
+                
+                using var workbook = new XLWorkbook(filePath);
+                var worksheet = workbook.Worksheets.First();
+
+                int lastRow = worksheet.LastRowUsed().RowNumber();
+
+                for (int row = 2; row <= lastRow; row++) // assuming row 1 is header
+                {
+                    int no = int.TryParse(worksheet.Cell(row, 1).GetValue<string>(), out var tempNo) ? tempNo : 0;
+                    DateTime timestamp = DateTime.TryParse(worksheet.Cell(row, 4).GetValue<string>(), out var tempDate) ? tempDate : DateTime.MinValue;
+
+                    results.Add(new Incidents
+                    {
+                        No = no,
+                        CameraName = worksheet.Cell(row, 2).GetValue<string>()?.Trim() ?? string.Empty,
+                        CameraId = worksheet.Cell(row, 3).GetValue<string>()?.Trim() ?? string.Empty,
+                        Timestamp = timestamp,
+                        TrackId = worksheet.Cell(row, 5).GetValue<string>()?.Trim() ?? string.Empty,
+                        MissingLabels = worksheet.Cell(row, 6).GetValue<string>()?.Trim() ?? string.Empty,
+                        ViolationType = worksheet.Cell(row, 7).GetValue<string>()?.Trim() ?? string.Empty
+                    });
+                }
+
+                return results;
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported file type. Only CSV and XLSX are supported.");
             }
 
             return results;

@@ -12,8 +12,8 @@ using Safety_Tech.Models.Models;
 namespace Safety_Tech.Models.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    [Migration("20251001063906_DeleteUnnecessaryTables")]
-    partial class DeleteUnnecessaryTables
+    [Migration("20251001073624_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,82 +223,50 @@ namespace Safety_Tech.Models.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Safety_Tech.Models.Models.ApprovedIncident", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApproveBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("IncidentId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsApprove")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApproveBy")
-                        .HasDatabaseName("IX_ApprovedIncident_ApproveBy");
-
-                    b.HasIndex("IncidentId")
-                        .HasDatabaseName("IX_ApprovedIncident_IncidentId");
-
-                    b.ToTable("ApprovedIncident", (string)null);
-                });
-
             modelBuilder.Entity("Safety_Tech.Models.Models.Incidents", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApproveBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApproverId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("Confidence")
-                        .HasColumnType("float");
+                    b.Property<string>("CameraId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CameraName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsApprove")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Label")
+                    b.Property<string>("MissingLabels")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("XMax")
-                        .HasColumnType("float");
+                    b.Property<int>("No")
+                        .HasColumnType("int");
 
-                    b.Property<double>("XMin")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
 
-                    b.Property<double>("YMax")
-                        .HasColumnType("float");
+                    b.Property<string>("TrackId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("YMin")
-                        .HasColumnType("float");
+                    b.Property<string>("ViolationType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApproverId");
 
-                    b.ToTable("Objectdetection", (string)null);
+                    b.ToTable("Incidents", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -350,25 +318,6 @@ namespace Safety_Tech.Models.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Safety_Tech.Models.Models.ApprovedIncident", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Approver")
-                        .WithMany()
-                        .HasForeignKey("ApproveBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Safety_Tech.Models.Models.Incidents", "Incident")
-                        .WithMany()
-                        .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Approver");
-
-                    b.Navigation("Incident");
                 });
 
             modelBuilder.Entity("Safety_Tech.Models.Models.Incidents", b =>

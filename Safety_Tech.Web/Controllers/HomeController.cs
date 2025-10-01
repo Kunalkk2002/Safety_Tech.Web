@@ -41,11 +41,9 @@ namespace Safety_Tech.Web.Controllers
         //[Authorize(Roles =UserSystemRoles.Admin)]
         public async Task<IActionResult> Index()
         {
-            var PotentialInsidents = _context.Incidents
-              
-                               .Count();
+            var PotentialInsidents = _context.Incidents.Count();
 
-            var confirmIncidents = await _context.Incidents
+            var Incidents = await _context.Incidents
                  .Include(ai => ai.Approver)
                 .ToListAsync();
 
@@ -54,9 +52,9 @@ namespace Safety_Tech.Web.Controllers
 
             var viewModel = new IncidentViewModel
             {
-               // ApprovedIncidents = confirmIncidents,
+                Incidents = Incidents,
                 PotentialIncidentsCount = potentialIncidentsCount,
-                ConfirmIncidentsCount = confirmIncidents.Count
+                ConfirmIncidentsCount = Incidents.Count
             };
 
             string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
@@ -71,36 +69,32 @@ namespace Safety_Tech.Web.Controllers
 
         [HttpGet]
         //[Authorize(Roles =UserSystemRoles.Admin)]
-        //public async Task<IActionResult> Index1()
-        //{
-        //    var PotentialInsidents = _context.Objectdetections
-        //      .Where(o => !_context.ApprovedIncidents
-        //              .Any(a => a.IncidentId == o.Id))
-        //                       .Count();
-        //    var confirmIncidents = await _context.ApprovedIncidents
-        //         .Include(ai => ai.Approver)
-        //        .ToListAsync();
+        public async Task<IActionResult> Index1()
+        {
+            var PotentialInsidents = _context.Incidents.Count();
 
-        //    var potentialIncidentsCount = _context.Objectdetections
-        //        .Where(o => !_context.ApprovedIncidents
-        //            .Any(a => a.IncidentId == o.Id))
-        //        .Count();
+            var Incidents = await _context.Incidents
+                 .Include(ai => ai.Approver)
+                .ToListAsync();
 
-        //    var viewModel = new IncidentViewModel
-        //    {
-        //        ApprovedIncidents = confirmIncidents,
-        //        PotentialIncidentsCount = potentialIncidentsCount,
-        //        ConfirmIncidentsCount = confirmIncidents.Count
-        //    };
+            var potentialIncidentsCount = _context.Incidents
+                .Count();
 
-        //    string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
-        //    string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
-        //    _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
+            var viewModel = new IncidentViewModel
+            {
+                Incidents = Incidents,
+                PotentialIncidentsCount = potentialIncidentsCount,
+                ConfirmIncidentsCount = Incidents.Count
+            };
 
-        //    return View(viewModel);
+            string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
+            string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
+            _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
+
+            return View(viewModel);
 
 
-        //}
+        }
 
         /// <summary>
         /// Displays the privacy page. Only accessible by users with the 'User' role.

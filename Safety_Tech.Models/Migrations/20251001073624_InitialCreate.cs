@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Safety_Tech.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentityTables : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -156,6 +156,33 @@ namespace Safety_Tech.Models.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Incidents",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    No = table.Column<int>(type: "int", nullable: false),
+                    CameraName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CameraId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TrackId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MissingLabels = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ViolationType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsApprove = table.Column<bool>(type: "bit", nullable: false),
+                    ApproveBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApproverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Incidents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Incidents_AspNetUsers_ApproverId",
+                        column: x => x.ApproverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +221,11 @@ namespace Safety_Tech.Models.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Incidents_ApproverId",
+                table: "Incidents",
+                column: "ApproverId");
         }
 
         /// <inheritdoc />
@@ -213,6 +245,9 @@ namespace Safety_Tech.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Incidents");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

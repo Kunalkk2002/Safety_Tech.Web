@@ -8,7 +8,7 @@ namespace Safety_Tech.DTOs.incidents
 {
     public class Incidents
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string? Image { get; set; }
 

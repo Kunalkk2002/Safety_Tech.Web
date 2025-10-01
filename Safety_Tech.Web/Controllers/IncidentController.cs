@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Safety_Tech.DTOs.incidents;
 using Safety_Tech.Models.Models;
+using Safety_Tech.Models.ViewModels;
 
 namespace Safety_Tech.Web.Controllers
 {
@@ -24,32 +25,31 @@ namespace Safety_Tech.Web.Controllers
             return View();
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> DetailsAsync()
         {
-            // Fetch all records from Objectdetection table
-            var records = _context.Incidents
-                 .Where(o => !o.IsApprove )
-                                  .OrderByDescending(o => o.CreatedAt) 
-                                  .ToList();
+            var PotentialInsidents = _context.Incidents.Count();
 
-            // Map Objectdetection->Incidents DTO
-                var incidents = records.Select(r => new DTOs.incidents.Incidents
-                {
-                    Id = r.Id,
-                    CreatedAt = r.CreatedAt,
-                    Image = r.Image ?? "Unknown", // adjust if you add Location
-                    Label = r.Label,
-                    Confidence = r.Confidence
-                    
-                }).ToList();
+            var Incidents = await _context.Incidents
+                 .Include(ai => ai.Approver)
+                .ToListAsync();
 
-            return View(incidents);
+            var potentialIncidentsCount = _context.Incidents
+                .Count();
+
+            var viewModel = new IncidentViewModel
+            {
+                Incidents = Incidents,
+              
+            };
+
+       
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Approve(int incidentId)
+        public async Task<IActionResult> Approve(Guid incidentId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -69,13 +69,13 @@ namespace Safety_Tech.Web.Controllers
             _context.Incidents.Update(incident); // optional, since tracked entity
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Details), new { id = incidentId });
+            return RedirectToAction(nameof(Index), "Home");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Reject(int incidentId)
+        public async Task<IActionResult> Reject(Guid incidentId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -94,7 +94,7 @@ namespace Safety_Tech.Web.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Details), new { id = incidentId });
+            return RedirectToAction(nameof(Index), "Home");
         }
 
         [HttpGet]

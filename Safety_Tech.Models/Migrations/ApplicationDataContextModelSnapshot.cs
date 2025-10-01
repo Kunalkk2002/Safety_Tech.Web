@@ -222,45 +222,42 @@ namespace Safety_Tech.Models.Migrations
 
             modelBuilder.Entity("Safety_Tech.Models.Models.Incidents", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApproveBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApproverId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("Confidence")
-                        .HasColumnType("float");
+                    b.Property<string>("CameraId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CameraName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsApprove")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Label")
+                    b.Property<string>("MissingLabels")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("XMax")
-                        .HasColumnType("float");
+                    b.Property<int>("No")
+                        .HasColumnType("int");
 
-                    b.Property<double>("XMin")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
 
-                    b.Property<double>("YMax")
-                        .HasColumnType("float");
+                    b.Property<string>("TrackId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("YMin")
-                        .HasColumnType("float");
+                    b.Property<string>("ViolationType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

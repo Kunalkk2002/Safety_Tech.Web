@@ -3,12 +3,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Health &amp; Safety Dashboard</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+          rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script>
         tailwind.config = {
@@ -38,40 +40,77 @@
         };
     </script>
     <style>
+        /* :root {
+          --color-primary: #6366F1;
+          --color-background-light: #F3F4F6;
+          --color-background-dark: #1F2937;
+          --color-card-light: #FFFFFF;
+          --color-card-dark: #374151;
+          --color-text-light: #111827;
+          --color-text-dark: #F9FAFB;
+          --color-text-secondary-light: #6B7280;
+          --color-text-secondary-dark: #9CA3AF;
+          --color-danger: #EF4444;
+
+          --font-sans: 'Inter', sans-serif;
+          --radius-lg: 0.75rem;
+        } */
+
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #131239 !important;
         }
 
         h3 {
             font-family: 'Inter', sans-serif;
             font-weight: 600;
-            color: #4B5563; /* Gray 600 */
+            /* color: #4B5563; */
+            color: white !important;
             font-size: 1.2rem !important;
+        }
+
+        .stats-cards {
+            background-color: #222A51 !important;
+            color: white !important;
         }
     </style>
 </head>
+
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
     <div class="p-6 md:p-8">
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md">
-                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Potential Incidents</h3>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                    Potential
+                    Incidents
+                </h3>
                 <p class="text-6xl font-bold mt-4">@Model.PotentialIncidentsCount</p>
                 <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">incidents</p>
             </div>
-            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md">
-                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Confirmed Incidents</h3>
-                <p class="text-6xl font-bold mt-4">@Model.ConfirmIncidentsCount<span class="text-4xl text-text-secondary-light dark:text-text-secondary-dark"></span></p>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                    Confirmed
+                    Incidents
+                </h3>
+                <p class="text-6xl font-bold mt-4">
+                    @Model.ConfirmIncidentsCount<span class="text-4xl text-text-secondary-light dark:text-text-secondary-dark"></span>
+                </p>
                 <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">incidents</p>
             </div>
-            <div class="col-span-1 md:col-span-2 lg:col-span-2 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md flex items-center justify-between">
+            <div class="col-span-1 md:col-span-2 lg:col-span-2 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md flex items-center justify-between stats-cards">
                 <div>
-                    <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Incidents this year</h3>
+                    <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                        Incidents
+                        this year
+                    </h3>
                     <p class="text-5xl font-bold mt-2">29</p>
                     <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">incidents</p>
                 </div>
                 <div>
-                    <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark text-right">frequency</h3>
+                    <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark text-right">
+                        frequency
+                    </h3>
                     <p class="text-5xl font-bold mt-2 text-right">6.8d</p>
                     <div class="flex items-center justify-end mt-1">
                         <span class="material-icons text-green-500 text-base">arrow_downward</span>
@@ -79,11 +118,14 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md">
+            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                     <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Recent Incidents</h3>
                     <div class="flex items-center space-x-2 mt-4 sm:mt-0">
-                        <button class="text-primary hover:underline text-sm font-medium">View all</button>
+                        <button class="text-primary hover:underline text-sm font-medium"
+                                onclick="window.location.href='/Incident/Details'">
+                            View all
+                        </button>
                     </div>
                 </div>
                 <!-- Filters -->
@@ -109,32 +151,57 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
+                                <th class="py-3 px-4 font-medium">Camera Name</th>
+                                <th class="py-3 px-4 font-medium">Camera Id</th>
+                                <th class="py-3 px-4 font-medium">Track Id</th>
+                                <th class="py-3 px-4 font-medium">Missing Labels</th>
+                                <th class="py-3 px-4 font-medium">Violation Type</th>
                                 <th class="py-3 px-4 font-medium">Date</th>
-                                <th class="py-3 px-4 font-medium">Location</th>
-                                <th class="py-3 px-4 font-medium">Type</th>
-                                <th class="py-3 px-4 font-medium">Severity</th>
-                                <th class="py-3 px-4 font-medium">Reported by</th>
                                 <th class="py-3 px-4 font-medium">Status</th>
+
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                        @*     @foreach (var item in Model.ApprovedIncidents)
+                          
+                            @foreach (var item in Model.Incidents)
                             {
+
                                 <tr class="text-sm">
-                                    <td class="py-3 px-4">2023-10-26</td>
-                                    <td class="py-3 px-4">Warehouse</td>
-                                    <td class="py-3 px-4">Slip, Trip, Fall</td>
-                                    <td class="py-3 px-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Minor</span></td>
-                                    <td class="py-3 px-4">@item.Approver.UserName</td>
-                                    <td class="py-3 px-4"><span class=@(item.IsApprove ? "text-green-500" : "text-red-500")>@(item.IsApprove ? "Approve" : "Reject")</span></td>
+                                    <td class="py-3 px-4">@item.CameraName</td>
+                                    <td class="py-3 px-4">@item.CameraId</td>
+                                    <td class="py-3 px-4">@item.TrackId</td>
+                                    <td class="py-3 px-4">@item.MissingLabels</td>
+                                    <td class="py-3 px-4">@item.ViolationType</td>
+                                    <td class="py-3 px-4">@item.Timestamp</td>
+                                    @* <td class="py-3 px-4"><span class="@(item.IsApprove ? "text-green-500" : "text-red-500")">@(item.IsApprove ? "Approve" : "Reject")</span></td> *@
+                                    <td class="py-3 px-4">
+                                        <div class="flex gap-2">
+                                            <form asp-controller="Incident" asp-action="Approve" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="incidentId" value="@item.Id" />
+                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-green-600 text-white hover:bg-green-700">Approve</button>
+                                            </form>
+                                            <form asp-controller="Incident" asp-action="Reject" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="incidentId" value="@item.Id" />
+                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-red-600 text-white hover:bg-red-700">Reject</button>
+                                            </form>
+                                            @* <button type="button" onclick="showImage('@Url.Action("GetImage", "Incedent", new { imagePath = item.Image })', '@item.Label')" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button> *@
+                                        </div>
+                                    </td>
                                 </tr>
-                            } *@
+                            }
+                           
+                         
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
-                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4">Incident Type</h3>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4 ">
+                    Incident
+                    Type
+                </h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm">Type 1</span>
@@ -154,8 +221,11 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
-                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4">Incident location</h3>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4">
+                    Incident
+                    location
+                </h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm">Office</span>
@@ -182,5 +252,49 @@
         </footer>
     </div>
 
+     <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center">
+                <img id="modalImage" src="" alt="Incident Image" class="max-w-full max-h-[70vh] mx-auto rounded-lg shadow-lg" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4='; this.alt='Image not found';">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showImage(imagePath, label) {
+            document.getElementById('modalImage').src = imagePath;
+            document.getElementById('modalTitle').textContent = 'Incident: ' + label;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+
 </body>
+
 </html>

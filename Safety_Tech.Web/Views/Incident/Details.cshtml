@@ -1,14 +1,16 @@
-﻿@using Safety_Tech.DTOs.incidents;
-@model List<Incidents>
+﻿@using Safety_Tech.Models.ViewModels
+@model IncidentViewModel;
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Health &amp; Safety Dashboard</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+          rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script>
         tailwind.config = {
@@ -38,22 +40,46 @@
         };
     </script>
     <style>
+        /* :root {
+                  --color-primary: #6366F1;
+                  --color-background-light: #F3F4F6;
+                  --color-background-dark: #1F2937;
+                  --color-card-light: #FFFFFF;
+                  --color-card-dark: #374151;
+                  --color-text-light: #111827;
+                  --color-text-dark: #F9FAFB;
+                  --color-text-secondary-light: #6B7280;
+                  --color-text-secondary-dark: #9CA3AF;
+                  --color-danger: #EF4444;
+
+                  --font-sans: 'Inter', sans-serif;
+                  --radius-lg: 0.75rem;
+                } */
+
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #131239 !important;
         }
 
         h3 {
             font-family: 'Inter', sans-serif;
             font-weight: 600;
-            color: #4B5563; /* Gray 600 */
+            /* color: #4B5563; */
+            color: white !important;
             font-size: 1.2rem !important;
+        }
+
+        .stats-cards {
+            background-color: #222A51 !important;
+            color: white !important;
         }
     </style>
 </head>
+
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
     <div class="p-6 md:p-8">
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md">
+            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                     <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Recent Incidents</h3>
                     <div class="flex items-center space-x-2 mt-4 sm:mt-0">
@@ -83,29 +109,29 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
-                                <th class="py-3 px-4 font-medium">Label</th>
-                                <th class="py-3 px-4 font-medium">Confidence</th>
+                                <th class="py-3 px-4 font-medium">Camera Name</th>
+                                <th class="py-3 px-4 font-medium">Camera Id</th>
+                                <th class="py-3 px-4 font-medium">Track Id</th>
+                                <th class="py-3 px-4 font-medium">Missing Labels</th>
+                                <th class="py-3 px-4 font-medium">Violation Type</th>
                                 <th class="py-3 px-4 font-medium">Date</th>
                                 <th class="py-3 px-4 font-medium">Status</th>
+
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.Incidents)
                             {
+
                                 <tr class="text-sm">
-                                    <!-- Type (Label in your model) -->
-                                    <td class="py-3 px-4">@item.Label</td>
-
-                                    <!-- Severity (map Confidence to severity levels) -->
-                                    <td class="py-3 px-4">
-                                        @item.Confidence
-                                    </td>
-
-                                    <!-- Date -->
-                                    <td class="py-3 px-4">@item.CreatedAt.ToString("yyyy-MM-dd")</td>
-
-                                    <!-- Status (example: approve if confidence > 0.8, else pending) -->
+                                    <td class="py-3 px-4">@item.CameraName</td>
+                                    <td class="py-3 px-4">@item.CameraId</td>
+                                    <td class="py-3 px-4">@item.TrackId</td>
+                                    <td class="py-3 px-4">@item.MissingLabels</td>
+                                    <td class="py-3 px-4">@item.ViolationType</td>
+                                    <td class="py-3 px-4">@item.Timestamp</td>
+                                    @* <td class="py-3 px-4"><span class="@(item.IsApprove ? "text-green-500" : "text-red-500")">@(item.IsApprove ? "Approve" : "Reject")</span></td> *@
                                     <td class="py-3 px-4">
                                         <div class="flex gap-2">
                                             <form asp-controller="Incident" asp-action="Approve" method="post">
@@ -118,12 +144,14 @@
                                                 <input type="hidden" name="incidentId" value="@item.Id" />
                                                 <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-red-600 text-white hover:bg-red-700">Reject</button>
                                             </form>
-                                            <button type="button" onclick="showImage('@Url.Action("GetImage", "Incedent", new { imagePath = item.Image })', '@item.Label')" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button>
-
+                                            @* <button type="button" onclick="showImage('@Url.Action("GetImage", "Incedent", new { imagePath = item.Image })', '@item.Label')" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button> *@
                                         </div>
                                     </td>
                                 </tr>
                             }
+
+
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -178,4 +206,5 @@
     </script>
 
 </body>
+
 </html>

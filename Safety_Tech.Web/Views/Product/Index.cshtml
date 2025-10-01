@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Safety_Tech.Models.Product>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Kendo UI -->
+    <link href="https://kendo.cdn.telerik.com/2023.2.829/styles/kendo.default-v2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.2.829/js/kendo.all.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131239 !important;
+        }
+
+        h3 {
+            font-weight: 600;
+            color: white !important;
+            font-size: 1.2rem !important;
+        }
+
+        .stats-cards {
+            background-color: #222A51 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+    <div class="p-6 md:p-8">
+        <main class="overflow-x-auto">
+            <h3 class="mb-4">Product List</h3>
+            <div id="grid" class="overflow-x-auto"></div>
+        </main>
+        <footer class="mt-8 flex justify-between items-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
+            <div>&copy; 2025 Product Dashboard</div>
+        </footer>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            $("#grid").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model)),
+                    pageSize: 5
+                },
+                height: 400,
+                sortable: true,
+                filterable: {
+                    mode: "row" // adds a filter row at the top
+                },
+                pageable: true,
+                columns: [
+                    { field: "Id", title: "ID", width: "50px" },
+                    { field: "Name", title: "Name" },
+                    { field: "Category", title: "Category" },
+                    { field: "Price", title: "Price", format: "{0:c}" }
+                ]
+            });
+        });
+    </script>
+</body>
+</html>

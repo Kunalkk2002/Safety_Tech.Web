@@ -1,49 +1,31 @@
 ﻿@using Safety_Tech.DTOs.UserDTOs
 @model LoginDto
 
- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-    <style>
-      /*   .card{
-           width: 528px;
-        } */
-    </style>
-</head>
-<body>
-
-    <div class="container mt-5">
-        <div class="row">
-            <!-- Normal Login -->
-            <div class="col-md-12 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Login</h5>
-                        <form id="normalLoginForm" action="/Auth/Login" method="post" method="post">
-                            <div class="form-group">
-                                <label for="username">Username or Email</label>
-                                <input id="txtUsername" asp-for="Username" type="text" class="form-control" name="username" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input id="txtPassword" type="password" asp-for="Password" class="form-control" name="password" required>
-                            </div>
-                            <button id="btnLogin" type="submit" class="btn btn-primary btn-block">Login</button>
-                            <div id="loginError" class="text-danger mt-2" style="display: none;"></div>
-                        </form>
-                    </div>
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="card shadow-sm login-card w-100" style="max-width: 440px;">
+        <div class="card-body p-4">
+            <h4 class="card-title mb-3 text-center">Sign in</h4>
+            <p class="text-muted text-center mb-4">Access your Safety_Tech dashboard</p>
+            <form id="normalLoginForm" action="/Auth/Login" method="post">
+                <div class="form-group mb-3">
+                    <label for="txtUsername" class="form-label">Username or Email</label>
+                    <input id="txtUsername" asp-for="Username" type="text" class="form-control" name="username" placeholder="e.g. john@company.com" required>
                 </div>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="txtPassword" class="form-label">Password</label>
+                    <input id="txtPassword" type="password" asp-for="Password" class="form-control" name="password" placeholder="••••••••" required>
+                </div>
+                <button id="btnLogin" type="submit" class="btn btn-primary w-100">Login</button>
+                <div id="loginError" class="text-danger mt-2" style="display: none;"></div>
+            </form>
         </div>
     </div>
+</div>
 @* 
     <div class="container mt-5">
         <div class="row">
@@ -106,11 +88,6 @@
         </div>
     </div> *@
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+@section Scripts{
     <script src="~/js/login.js"></script>
-   
-</body>
-</html>
+}

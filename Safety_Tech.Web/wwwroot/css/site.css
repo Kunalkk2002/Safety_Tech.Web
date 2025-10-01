@@ -20,3 +20,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Login page tweaks */
+.login-card {
+  border-radius: 0.5rem;
+}
+.login-card .form-control {
+  height: 44px;
+}

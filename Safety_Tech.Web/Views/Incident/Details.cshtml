@@ -119,6 +119,18 @@
         .btn-approve:hover { background-color: #15803D; }
         .btn-reject:hover { background-color: #B91C1C; }
         .btn-view:hover { background-color: #1D4ED8; }
+
+        /* Make sure the grid draws horizontal separators */
+        #grid .k-table td,
+        #grid .k-grid-content td {
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+
+        /* Optional: remove last row border */
+        #grid .k-table tr:last-child td {
+            border-bottom: none !important;
+        }
+
     </style>
 </head>
 <body>
@@ -139,6 +151,9 @@
                    .Title("Date")
                    .Format("{0:yyyy-MM-dd}")
                    .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+   
+
+
             columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
             columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
             columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
@@ -157,9 +172,10 @@
         .DataSource(dataSource => dataSource
             .Ajax()
             .PageSize(10)
-            .ServerOperation(false)
+            .ServerOperation(true)
         )
         .BindTo(Model.Incidents)
     )
+
 </body>
 </html>

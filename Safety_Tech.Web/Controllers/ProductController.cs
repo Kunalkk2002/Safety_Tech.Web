@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
+using Microsoft.AspNetCore.Mvc;
 using Safety_Tech.Models;
 
 namespace Safety_Tech.Web.Controllers
@@ -18,6 +20,19 @@ namespace Safety_Tech.Web.Controllers
             };
 
             return View(products);
+        }
+
+        public IActionResult Products_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var products = new List<Product>
+            {
+                new Product { Id = 1, Name = "Laptop", Category = "Electronics", Price = 45000 },
+                new Product { Id = 2, Name = "Mobile", Category = "Electronics", Price = 25000 },
+                new Product { Id = 3, Name = "Shoes", Category = "Fashion", Price = 3000 },
+                new Product { Id = 4, Name = "Shirt", Category = "Fashion", Price = 1200 },
+                new Product { Id = 5, Name = "Book", Category = "Stationary", Price = 500 }
+            };
+            return Json(products.ToDataSourceResult(request));
         }
     }
 }

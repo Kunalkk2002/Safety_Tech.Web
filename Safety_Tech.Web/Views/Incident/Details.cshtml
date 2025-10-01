@@ -1,64 +1,131 @@
 ﻿@using Safety_Tech.Models.ViewModels
-@model IncidentViewModel
+@model IncidentViewModel;
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Kendo Grid Test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Themed Kendo UI Grid</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <!-- Kendo UI CSS (match ASP.NET Core MVC wrapper version) -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.117/styles/kendo.default-v2.min.css" />
 
-    <!-- jQuery first -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Kendo UI JS (match version) -->
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+    <!-- Kendo ASP.NET MVC wrappers helper (provides kendo.syncReady) -->
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.aspnetmvc.min.js"></script>
 
-    <!-- Kendo UI -->
-    <link href="https://kendo.cdn.telerik.com/2023.2.829/styles/kendo.default-v2.min.css" rel="stylesheet" />
-    <script src="https://kendo.cdn.telerik.com/2023.2.829/js/kendo.all.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131239;
+            color: white;
+            margin: 20px;
+        }
+
+        /* Disable browser-native input clear buttons */
+        input::-ms-clear,
+        input::-ms-reveal,
+        input::-webkit-search-cancel-button {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        /* Grid container */
+        #grid {
+            background-color: #222A51;
+            border-radius: 0.75rem;
+            padding: 10px;
+        }
+
+            /* Grid header */
+            #grid .k-grid-header th {
+                background-color: #131239 !important;
+                color: white !important;
+                border-color: #374151 !important;
+            }
+
+            /* Filter row inputs */
+            #grid .k-grid-header .k-textbox,
+            #grid .k-grid-header .k-dropdown,
+            #grid .k-grid-header .k-picker-wrap,
+            #grid .k-grid-header .k-input-inner {
+                background-color: #374151 !important;
+                color: white !important;
+                border-color: #4B5563 !important;
+            }
+
+            /* Hide Kendo clear (cross) buttons inside filter inputs */
+            #grid .k-input-button,
+            #grid .k-clear-value {
+                display: none !important;
+            }
+
+            /* Grid rows */
+            #grid .k-grid-content tr {
+                background-color: #222A51;
+                color: white;
+            }
+
+                #grid .k-grid-content tr.k-alt {
+                    background-color: #1F233F;
+                }
+
+            /* Pager */
+            #grid .k-pager {
+                background-color: #222A51 !important;
+                color: white !important;
+            }
+
+                #grid .k-pager .k-link { color: white !important; }
+
+        /* Buttons inside grid */
+        .k-button { border-radius: 0.75rem !important; font-size: 0.875rem; font-weight: 500; }
+        .btn-approve { background-color: #16A34A; color: white; }
+        .btn-reject { background-color: #DC2626; color: white; }
+        .btn-view { background-color: #2563EB; color: white; }
+        .btn-approve:hover { background-color: #15803D; }
+        .btn-reject:hover { background-color: #B91C1C; }
+        .btn-view:hover { background-color: #1D4ED8; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-6">
-    <h3 class="mb-4">Recent Incidents</h3>
-    <div id="grid"></div>
+<body>
 
-    <script>
-        jQuery(document).ready(function () {
-            // Test static data first
-            var incidentsData = [
-                { cameraName: "Cam A", cameraId: "C001", trackId: "T001", missingLabels: "None", violationType: "Slip", timestamp: new Date() },
-                { cameraName: "Cam B", cameraId: "C002", trackId: "T002", missingLabels: "Label1", violationType: "Trip", timestamp: new Date() }
-            ];
+    <h3 style="margin-bottom: 15px;">Recent Incidents</h3>
 
-            $("#grid").kendoGrid({
-                dataSource: {
-                    data: incidentsData,
-                    schema: {
-                        model: {
-                            fields: {
-                                cameraName: { type: "string" },
-                                cameraId: { type: "string" },
-                                trackId: { type: "string" },
-                                missingLabels: { type: "string" },
-                                violationType: { type: "string" },
-                                timestamp: { type: "date" }
-                            }
-                        }
-                    },
-                    pageSize: 20
-                },
-                height: 400,
-                sortable: true,
-                pageable: true,
-                filterable: { mode: "row" },
-                columns: [
-                    { field: "cameraName", title: "Camera Name" },
-                    { field: "cameraId", title: "Camera Id" },
-                    { field: "trackId", title: "Track Id" },
-                    { field: "missingLabels", title: "Missing Labels" },
-                    { field: "violationType", title: "Violation Type" },
-                    { field: "timestamp", title: "Date", format: "{0:yyyy-MM-dd HH:mm}" }
-                ]
-            });
-        });
-    </script>
+    @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.CameraName)
+                   .Title("Camera Name")
+                   .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
+            columns.Bound(p => p.ViolationType)
+                   .Title("Violation Type")
+                   .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
+            columns.Bound(p => p.Timestamp)
+                   .Title("Date")
+                   .Format("{0:yyyy-MM-dd}")
+                   .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+            columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
+            columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
+            columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
+        })
+        .Pageable()
+        .Sortable()
+        .Scrollable()
+        .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+        .HtmlAttributes(new { style = "height:520px;" })
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(10)
+            .ServerOperation(false)
+        )
+        .BindTo(Model.Incidents)
+    )
 </body>
 </html>

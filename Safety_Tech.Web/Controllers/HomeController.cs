@@ -50,11 +50,17 @@ namespace Safety_Tech.Web.Controllers
             var potentialIncidentsCount = _context.Incidents
                 .Count();
 
+            var ViolationTypes = _context.Incidents
+                                     .Select(i => i.ViolationType)
+                                     .Distinct()
+                                     .ToList();
+
             var viewModel = new IncidentViewModel
             {
                 Incidents = Incidents,
                 PotentialIncidentsCount = potentialIncidentsCount,
-                ConfirmIncidentsCount = Incidents.Count
+                ConfirmIncidentsCount = Incidents.Count,
+                ViolationTypes = ViolationTypes
             };
 
             string sourceFolderPath = "D:\\DIBS Project\\csvFiles";

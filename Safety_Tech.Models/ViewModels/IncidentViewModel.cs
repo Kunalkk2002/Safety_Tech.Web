@@ -13,5 +13,7 @@ namespace Safety_Tech.Models.ViewModels
         public int PotentialIncidentsCount { get; set; }
         public int ConfirmIncidentsCount { get; set; }
 
+        public List<string>? ViolationTypes { get; set; }
+
     }
 }

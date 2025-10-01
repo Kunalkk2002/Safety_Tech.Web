@@ -41,20 +41,20 @@
     </script>
     <style>
         /* :root {
-          --color-primary: #6366F1;
-          --color-background-light: #F3F4F6;
-          --color-background-dark: #1F2937;
-          --color-card-light: #FFFFFF;
-          --color-card-dark: #374151;
-          --color-text-light: #111827;
-          --color-text-dark: #F9FAFB;
-          --color-text-secondary-light: #6B7280;
-          --color-text-secondary-dark: #9CA3AF;
-          --color-danger: #EF4444;
+                  --color-primary: #6366F1;
+                  --color-background-light: #F3F4F6;
+                  --color-background-dark: #1F2937;
+                  --color-card-light: #FFFFFF;
+                  --color-card-dark: #374151;
+                  --color-text-light: #111827;
+                  --color-text-dark: #F9FAFB;
+                  --color-text-secondary-light: #6B7280;
+                  --color-text-secondary-dark: #9CA3AF;
+                  --color-danger: #EF4444;
 
-          --font-sans: 'Inter', sans-serif;
-          --radius-lg: 0.75rem;
-        } */
+                  --font-sans: 'Inter', sans-serif;
+                  --radius-lg: 0.75rem;
+                } */
 
         body {
             font-family: 'Inter', sans-serif;
@@ -74,6 +74,8 @@
             color: white !important;
         }
     </style>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -122,33 +124,25 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                     <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Recent Incidents</h3>
                     <div class="flex items-center space-x-2 mt-4 sm:mt-0">
-                        <button class="text-primary hover:underline text-sm font-medium"
-                                onclick="window.location.href='/Incident/Details'">
+                        <a asp-controller="Incident" asp-action="Details"
+                           class="text-primary hover:underline text-sm font-medium">
                             View all
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <!-- Filters -->
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <!-- Camera -->
-                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-primary text-white hover:bg-primary/90">
-                        Camera
-                    </button>
-                    <!-- Incident Type -->
-                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
-                        Incident Type
-                    </button>
-                    <!-- From Date -->
-                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
-                        From Date
-                    </button>
-                    <!-- To Date -->
-                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
-                        To Date
-                    </button>
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="text-sm opacity-80">Total: @((Model?.Incidents?.Count ?? 0))</span>
+                    <select id="cameraFilter" style="width: 220px;"></select>
+                    <select id="violationFilter" style="width: 220px;"></select>
+                    <input id="fromDate" type="date" style="width: 180px;" />
+                    <input id="toDate" type="date" style="width: 180px;" />
+                    <button id="clearFilters" class="px-3 py-1 text-sm font-medium rounded bg-gray-200 text-gray-800 hover:bg-gray-300">Clear</button>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                <div id="grid" class="hidden"></div>
+                <div id="gridError" class="mt-2 text-red-400 text-sm"></div>
+                <div id="fallbackTable" class="overflow-x-auto">
+                    <table id="dtIncidents" class="w-full text-left display">
                         <thead>
                             <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
                                 <th class="py-3 px-4 font-medium">Camera Name</th>
@@ -157,42 +151,37 @@
                                 <th class="py-3 px-4 font-medium">Missing Labels</th>
                                 <th class="py-3 px-4 font-medium">Violation Type</th>
                                 <th class="py-3 px-4 font-medium">Date</th>
-                                <th class="py-3 px-4 font-medium">Status</th>
+                                <th class="py-3 px-4 font-medium">Actions</th>
 
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                          
-                            @foreach (var item in Model.Incidents)
+                        <tbody>
+                            @foreach (var i in Model.Incidents)
                             {
-
                                 <tr class="text-sm">
-                                    <td class="py-3 px-4">@item.CameraName</td>
-                                    <td class="py-3 px-4">@item.CameraId</td>
-                                    <td class="py-3 px-4">@item.TrackId</td>
-                                    <td class="py-3 px-4">@item.MissingLabels</td>
-                                    <td class="py-3 px-4">@item.ViolationType</td>
-                                    <td class="py-3 px-4">@item.Timestamp</td>
-                                    @* <td class="py-3 px-4"><span class="@(item.IsApprove ? "text-green-500" : "text-red-500")">@(item.IsApprove ? "Approve" : "Reject")</span></td> *@
+                                    <td class="py-3 px-4">@i.CameraName</td>
+                                    <td class="py-3 px-4">@i.CameraId</td>
+                                    <td class="py-3 px-4">@i.TrackId</td>
+                                    <td class="py-3 px-4">@i.MissingLabels</td>
+                                    <td class="py-3 px-4">@i.ViolationType</td>
+                                    <td class="py-3 px-4">@i.Timestamp</td>
                                     <td class="py-3 px-4">
                                         <div class="flex gap-2">
                                             <form asp-controller="Incident" asp-action="Approve" method="post">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="incidentId" value="@item.Id" />
+                                                <input type="hidden" name="incidentId" value="@i.Id" />
                                                 <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-green-600 text-white hover:bg-green-700">Approve</button>
                                             </form>
                                             <form asp-controller="Incident" asp-action="Reject" method="post">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="incidentId" value="@item.Id" />
+                                                <input type="hidden" name="incidentId" value="@i.Id" />
                                                 <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-red-600 text-white hover:bg-red-700">Reject</button>
                                             </form>
-                                            @* <button type="button" onclick="showImage('@Url.Action("GetImage", "Incedent", new { imagePath = item.Image })', '@item.Label')" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button> *@
+                                            <button type="button" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button>
                                         </div>
                                     </td>
                                 </tr>
                             }
-                           
-                         
                         </tbody>
                     </table>
                 </div>
@@ -203,22 +192,15 @@
                     Type
                 </h3>
                 <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm">Type 1</span>
-                        <!-- <span class="text-sm font-semibold">2</span> -->
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm">Type 2</span>
-                        <!-- <span class="text-sm font-semibold">7</span> -->
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm">Type 3</span>
-                        <!-- <span class="text-sm font-semibold">8</span> -->
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm">Type 3</span>
-                        <!-- <span class="text-sm font-semibold">12</span> -->
-                    </div>
+
+                    @foreach (var type in Model.ViolationTypes)
+                    {
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">@type</span>
+                            <!-- <span class="text-sm font-semibold">2</span> -->
+                        </div>
+                    }
+
                 </div>
             </div>
             <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
@@ -252,7 +234,7 @@
         </footer>
     </div>
 
-     <!-- Image Modal -->
+    <!-- Image Modal -->
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
             <div class="flex justify-between items-center mb-4">
@@ -293,7 +275,95 @@
                 closeModal();
             }
         });
+
     </script>
+
+    @section Scripts {
+        <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+        <script>
+            // DataTables initialization and external filters
+            function showImage(imagePath, label) {
+                document.getElementById('modalImage').src = imagePath;
+                document.getElementById('modalTitle').textContent = 'Incident: ' + label;
+                document.getElementById('imageModal').classList.remove('hidden');
+            }
+
+            function closeModal() {
+                document.getElementById('imageModal').classList.add('hidden');
+            }
+
+            // Close modal when clicking outside
+            document.getElementById('imageModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            $(function(){
+                // Build unique options
+                function buildUniqueOptions(colIndex, selectId, placeholder){
+                    var set = new Set();
+                    $('#dtIncidents tbody tr').each(function(){
+                        var v = $(this).find('td').eq(colIndex).text().trim();
+                        if (v) set.add(v);
+                    });
+                    var $s = $(selectId); $s.empty(); $s.append('<option value="">'+placeholder+'</option>');
+                    Array.from(set).sort().forEach(function(v){ $s.append('<option>'+ $('<div>').text(v).html() +'</option>'); });
+                }
+                buildUniqueOptions(0, '#cameraFilter', 'All Cameras');
+                buildUniqueOptions(4, '#violationFilter', 'All Violations');
+
+                var dt = $('#dtIncidents').DataTable({
+                    paging: true,
+                    pageLength: 10, // show 10 by default
+                    info: false,
+                    searching: true, // enable programmatic filters
+                    lengthChange: false,
+                    order: [[5, 'desc']],
+                    dom: 't' // hide built-in controls (only table visible)
+                });
+
+                // Date range filter
+                $.fn.dataTable.ext.search.push(function(settings, data){
+                    if (settings.nTable.id !== 'dtIncidents') return true;
+                    var min = $('#fromDate').val();
+                    var max = $('#toDate').val();
+                    var dateStr = data[5] || '';
+                    if (!min && !max) return true;
+                    var rowDate = new Date(dateStr);
+                    if (isNaN(rowDate)) return true;
+                    if (min && rowDate < new Date(min + 'T00:00:00')) return false;
+                    if (max && rowDate > new Date(max + 'T23:59:59')) return false;
+                    return true;
+                });
+
+                $('#cameraFilter').on('change', function(){
+                    var v = this.value;
+                    dt.column(0).search(v ? '^'+$.fn.dataTable.util.escapeRegex(v)+'$' : '', true, false).draw();
+                });
+                $('#violationFilter').on('change', function(){
+                    var v = this.value;
+                    dt.column(4).search(v ? '^'+$.fn.dataTable.util.escapeRegex(v)+'$' : '', true, false).draw();
+                });
+                $('#fromDate,#toDate').on('change', function(){ dt.draw(); });
+                $('#clearFilters').on('click', function(){
+                    $('#cameraFilter').val('');
+                    $('#violationFilter').val('');
+                    $('#fromDate').val('');
+                    $('#toDate').val('');
+                    dt.search('').columns().search('').draw();
+                });
+            });
+        </script>
+    }
+
 
 </body>
 

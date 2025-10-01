@@ -1,0 +1,13 @@
+{
+  "version": "3.0",
+  "defaultProvider": "jsdelivr",
+  "libraries": [
+    {
+      "library": "@progress/kendo-ui@2024.2.514",
+      "destination": "wwwroot/lib/Kendo/",
+      "files": [
+        "js/kendo.all.min.js"
+      ]
+    }
+  ]
+}

@@ -37,7 +37,7 @@ public partial class ApplicationDataContext : IdentityDbContext<IdentityUser>   
 
     public virtual DbSet<WorkType> WorkTypes { get; set; }
 
-    public virtual DbSet<Objectdetection> Objectdetections { get; set; }
+    public virtual DbSet<Incidents> Objectdetections { get; set; }
 
     public virtual DbSet<ApprovedIncident> ApprovedIncidents { get; set; }
 
@@ -168,7 +168,7 @@ public partial class ApplicationDataContext : IdentityDbContext<IdentityUser>   
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<Objectdetection>(entity =>
+        modelBuilder.Entity<Incidents>(entity =>
         {
             entity.ToTable("Objectdetection");
         });

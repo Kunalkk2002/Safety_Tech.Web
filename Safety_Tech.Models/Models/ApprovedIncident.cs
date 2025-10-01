@@ -13,7 +13,7 @@ namespace Safety_Tech.Models.Models
 
         public bool IsApprove { get; set; }
 
-        public Objectdetection? Incident { get; set; }
+        public Incidents? Incident { get; set; }
 
         public IdentityUser? Approver { get; set; }
     }

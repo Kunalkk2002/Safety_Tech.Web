@@ -1,0 +1,238 @@
+﻿@using Safety_Tech.Models.ViewModels
+@model IncidentViewModel;
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Health &amp; Safety Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // Indigo 500
+                        "background-light": "#F3F4F6", // Gray 100
+                        "background-dark": "#1F2937", // Gray 800
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151", // Gray 700
+                        "text-light": "#111827", // Gray 900
+                        "text-dark": "#F9FAFB", // Gray 50
+                        "text-secondary-light": "#6B7280", // Gray 500
+                        "text-secondary-dark": "#9CA3AF", // Gray 400
+                        "danger": "#EF4444" // Red 500
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'lg': '0.75rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* :root {
+          --color-primary: #6366F1;
+          --color-background-light: #F3F4F6;
+          --color-background-dark: #1F2937;
+          --color-card-light: #FFFFFF;
+          --color-card-dark: #374151;
+          --color-text-light: #111827;
+          --color-text-dark: #F9FAFB;
+          --color-text-secondary-light: #6B7280;
+          --color-text-secondary-dark: #9CA3AF;
+          --color-danger: #EF4444;
+
+          --font-sans: 'Inter', sans-serif;
+          --radius-lg: 0.75rem;
+        } */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131239 !important;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            /* color: #4B5563; */
+            color: white !important;
+            font-size: 1.2rem !important;
+        }
+
+        .stats-cards {
+            background-color: #222A51 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+    <div class="p-6 md:p-8">
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                    Potential
+                    Incidents
+                </h3>
+                <p class="text-6xl font-bold mt-4">@Model.PotentialIncidentsCount</p>
+                <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">incidents</p>
+            </div>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                    Confirmed
+                    Incidents
+                </h3>
+                <p class="text-6xl font-bold mt-4">
+                    @Model.ConfirmIncidentsCount<span class="text-4xl text-text-secondary-light dark:text-text-secondary-dark"></span>
+                </p>
+                <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">incidents</p>
+            </div>
+            <div class="col-span-1 md:col-span-2 lg:col-span-2 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md flex items-center justify-between stats-cards">
+                <div>
+                    <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                        Incidents
+                        this year
+                    </h3>
+                    <p class="text-5xl font-bold mt-2">29</p>
+                    <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">incidents</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark text-right">
+                        frequency
+                    </h3>
+                    <p class="text-5xl font-bold mt-2 text-right">6.8d</p>
+                    <div class="flex items-center justify-end mt-1">
+                        <span class="material-icons text-green-500 text-base">arrow_downward</span>
+                        <p class="text-sm text-green-500 ml-1">23% v last year</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                    <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Recent Incidents</h3>
+                    <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                        <button class="text-primary hover:underline text-sm font-medium">View all</button>
+                    </div>
+                </div>
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <!-- Camera -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-primary text-white hover:bg-primary/90">
+                        Camera
+                    </button>
+                    <!-- Incident Type -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Incident Type
+                    </button>
+                    <!-- From Date -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        From Date
+                    </button>
+                    <!-- To Date -->
+                    <button class="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        To Date
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
+                                <th class="py-3 px-4 font-medium">Date</th>
+                                <th class="py-3 px-4 font-medium">Location</th>
+                                <th class="py-3 px-4 font-medium">Type</th>
+                                <th class="py-3 px-4 font-medium">Severity</th>
+                                <th class="py-3 px-4 font-medium">Reported by</th>
+                                <th class="py-3 px-4 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                          
+                            @foreach (var item in Model.ApprovedIncidents)
+                            {
+
+                                <tr class="text-sm">
+                                    <td class="py-3 px-4">2023-10-24</td>
+                                    <td class="py-3 px-4">Workshop</td>
+                                    <td class="py-3 px-4">Equipment</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-orange-100 text-orange-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">Moderate</span>
+                                    </td>
+                                    <td class="py-3 px-4">@item.Approver.UserName</td>
+                                    <td class="py-3 px-4"><span class="@(item.IsApprove ? "text-green-500" : "text-red-500")">@(item.IsApprove ? "Approve" : "Reject")</span></td>
+                                </tr>
+                            }
+                           
+                         
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4 ">
+                    Incident
+                    Type
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Type 1</span>
+                        <!-- <span class="text-sm font-semibold">2</span> -->
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Type 2</span>
+                        <!-- <span class="text-sm font-semibold">7</span> -->
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Type 3</span>
+                        <!-- <span class="text-sm font-semibold">8</span> -->
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Type 3</span>
+                        <!-- <span class="text-sm font-semibold">12</span> -->
+                    </div>
+                </div>
+            </div>
+            <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
+                <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4">
+                    Incident
+                    location
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Office</span>
+                        <span class="text-sm font-semibold">2</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Warehouse</span>
+                        <span class="text-sm font-semibold">7</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Workshop</span>
+                        <span class="text-sm font-semibold">8</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Offsite</span>
+                        <span class="text-sm font-semibold">12</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="mt-8 flex justify-between items-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
+            <div class="flex items-center">
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

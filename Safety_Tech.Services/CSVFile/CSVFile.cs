@@ -108,14 +108,14 @@ namespace Safety_Tech.Services.CSVFile
         }
 
         /// <summary>
-        /// Reads a CSV file and converts its content into a list of <see cref="Objectdetection"/> objects.
+        /// Reads a CSV file and converts its content into a list of <see cref="Incidents"/> objects.
         /// </summary>
         /// <param name="filePath">The path to the CSV file.</param>
         /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
-        /// <returns>A list of <see cref="Objectdetection"/> objects.</returns>
-        private static async Task<List<Objectdetection>> ReadCsvAsync(string filePath, CancellationToken cancellationToken)
+        /// <returns>A list of <see cref="Incidents"/> objects.</returns>
+        private static async Task<List<Incidents>> ReadCsvAsync(string filePath, CancellationToken cancellationToken)
         {
-            var results = new List<Objectdetection>();
+            var results = new List<Incidents>();
 
             using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var reader = new StreamReader(stream, Encoding.UTF8);
@@ -134,7 +134,7 @@ namespace Safety_Tech.Services.CSVFile
                 // Expected columns: image,label,confidence,xmin,ymin,xmax,ymax
                 if (columns.Length < 7) continue;
 
-                var entity = new Objectdetection
+                var entity = new Incidents
                 {
                     Image = columns[0],
                     Label = columns[1],

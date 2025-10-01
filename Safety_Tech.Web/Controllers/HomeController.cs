@@ -45,6 +45,7 @@ namespace Safety_Tech.Web.Controllers
               .Where(o => !_context.ApprovedIncidents
                       .Any(a => a.IncidentId == o.Id))
                                .Count();
+
             var confirmIncidents = await _context.ApprovedIncidents
                  .Include(ai => ai.Approver)
                 .ToListAsync();
@@ -68,6 +69,40 @@ namespace Safety_Tech.Web.Controllers
             return View(viewModel);
          
            
+        }
+
+
+        [HttpGet]
+        //[Authorize(Roles =UserSystemRoles.Admin)]
+        public async Task<IActionResult> Index1()
+        {
+            var PotentialInsidents = _context.Objectdetections
+              .Where(o => !_context.ApprovedIncidents
+                      .Any(a => a.IncidentId == o.Id))
+                               .Count();
+            var confirmIncidents = await _context.ApprovedIncidents
+                 .Include(ai => ai.Approver)
+                .ToListAsync();
+
+            var potentialIncidentsCount = _context.Objectdetections
+                .Where(o => !_context.ApprovedIncidents
+                    .Any(a => a.IncidentId == o.Id))
+                .Count();
+
+            var viewModel = new IncidentViewModel
+            {
+                ApprovedIncidents = confirmIncidents,
+                PotentialIncidentsCount = potentialIncidentsCount,
+                ConfirmIncidentsCount = confirmIncidents.Count
+            };
+
+            string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
+            string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
+            _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
+
+            return View(viewModel);
+
+
         }
 
         /// <summary>

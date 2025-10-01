@@ -28,13 +28,12 @@ namespace Safety_Tech.Web.Controllers
         {
             // Fetch all records from Objectdetection table
             var records = _context.Objectdetections
-                 .Where(o => !_context.ApprovedIncidents
-                         .Any(a => a.IncidentId == o.Id))
-                                  .OrderByDescending(o => o.CreatedAt) // optional: latest first
+                 .Where(o => !o.IsApprove )
+                                  .OrderByDescending(o => o.CreatedAt) 
                                   .ToList();
 
             // Map Objectdetection->Incidents DTO
-                var incidents = records.Select(r => new Incidents
+                var incidents = records.Select(r => new DTOs.incidents.Incidents
                 {
                     Id = r.Id,
                     CreatedAt = r.CreatedAt,
@@ -58,23 +57,19 @@ namespace Safety_Tech.Web.Controllers
                 return Unauthorized();
             }
 
-            var exists = _context.Objectdetections.Any(o => o.Id == incidentId);
-            if (!exists)
+            var incident = await _context.Objectdetections.FindAsync(incidentId);
+            if (incident == null)
             {
                 return NotFound();
             }
 
-            var approved = new ApprovedIncident
-            {
-                IncidentId = incidentId,
-                ApproveBy = user.Id,
-                IsApprove = true
-            };
+            incident.ApproveBy = user.Id;
+            incident.IsApprove = true;
 
-            _context.ApprovedIncidents.Add(approved);
+            _context.Objectdetections.Update(incident); // optional, since tracked entity
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Details));
+            return RedirectToAction(nameof(Details), new { id = incidentId });
         }
 
         [HttpPost]
@@ -88,23 +83,18 @@ namespace Safety_Tech.Web.Controllers
                 return Unauthorized();
             }
 
-            var exists = _context.Objectdetections.Any(o => o.Id == incidentId);
-            if (!exists)
+            var incident = await _context.Objectdetections.FindAsync(incidentId);
+            if (incident == null)
             {
                 return NotFound();
             }
 
-            var rejected = new ApprovedIncident
-            {
-                IncidentId = incidentId,
-                ApproveBy = user.Id,
-                IsApprove = false
-            };
+            incident.ApproveBy = user.Id;
+            incident.IsApprove = false;
 
-            _context.ApprovedIncidents.Add(rejected);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Details));
+            return RedirectToAction(nameof(Details), new { id = incidentId });
         }
 
         [HttpGet]

@@ -49,6 +49,16 @@
                 border-color: #374151 !important;
             }
 
+            /* Ensure header + filter row surfaces are dark */
+            #grid .k-grid-header,
+            #grid .k-filter-row,
+            #grid .k-filter-row .k-table-td,
+            #grid .k-table-th {
+                background-color: #131239 !important;
+                color: white !important;
+                border-color: #374151 !important;
+            }
+
             /* Filter row inputs */
             #grid .k-grid-header .k-textbox,
             #grid .k-grid-header .k-dropdown,
@@ -75,6 +85,22 @@
                     background-color: #1F233F;
                 }
 
+            /* Dark background for empty content area */
+            #grid .k-grid-content,
+            #grid .k-grid-content-locked {
+                background-color: #222A51 !important;
+            }
+
+            /* Body cell borders/text */
+            #grid .k-table,
+            #grid .k-table tbody,
+            #grid .k-table tr,
+            #grid .k-table-td {
+                background-color: transparent !important;
+                color: white !important;
+                border-color: #2C3464 !important;
+            }
+
             /* Pager */
             #grid .k-pager {
                 background-color: #222A51 !important;
@@ -88,6 +114,8 @@
         .btn-approve { background-color: #16A34A; color: white; }
         .btn-reject { background-color: #DC2626; color: white; }
         .btn-view { background-color: #2563EB; color: white; }
+        .btn-approve, .btn-reject, .btn-view { padding: 4px 12px; border: 0; display: inline-block; }
+        a.k-button.btn-view { text-decoration: none; }
         .btn-approve:hover { background-color: #15803D; }
         .btn-reject:hover { background-color: #B91C1C; }
         .btn-view:hover { background-color: #1D4ED8; }
@@ -114,10 +142,16 @@
             columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
             columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
             columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
+            columns.Bound(p => p.Id)
+                   .Title("Actions")
+                   .Encoded(false)
+                   .Width(260)
+                   .ClientTemplate("<div style='display:flex;gap:6px;align-items:center;'><form method='post' action='/Incident/Approve'><input type='hidden' name='incidentId' value='#= Id #' /><button type='submit' class='k-button btn-approve'>Approve</button></form><form method='post' action='/Incident/Reject'><input type='hidden' name='incidentId' value='#= Id #' /><button type='submit' class='k-button btn-reject'>Reject</button></form><a href='/Incident/Details/#= Id #' class='k-button btn-view'>View</a></div>")
+                   .Filterable(false);
         })
         .Pageable()
         .Sortable()
-        .Scrollable()
+        .Scrollable(s => s.Enabled(false))
         .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
         .HtmlAttributes(new { style = "height:520px;" })
         .DataSource(dataSource => dataSource

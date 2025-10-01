@@ -1,5 +1,5 @@
 ﻿@using Safety_Tech.Models.ViewModels
-@model IncidentViewModel;
+@model IncidentViewModel
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,64 +7,31 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Health &amp; Safety Dashboard</title>
+    <title>Health & Safety Dashboard</title>
+
+    <!-- Tailwind & Fonts -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
-          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6366F1', // Indigo 500
-                        "background-light": "#F3F4F6", // Gray 100
-                        "background-dark": "#1F2937", // Gray 800
-                        "card-light": "#FFFFFF",
-                        "card-dark": "#374151", // Gray 700
-                        "text-light": "#111827", // Gray 900
-                        "text-dark": "#F9FAFB", // Gray 50
-                        "text-secondary-light": "#6B7280", // Gray 500
-                        "text-secondary-dark": "#9CA3AF", // Gray 400
-                        "danger": "#EF4444" // Red 500
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    borderRadius: {
-                        'lg': '0.75rem',
-                    },
-                },
-            },
-        };
-    </script>
+
+    <!-- ✅ Kendo UI CSS -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.2.829/styles/kendo.default-v2.min.css" />
+
+
+    <!-- ✅ jQuery (must come first) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ✅ Kendo UI JS -->
+    <script src="https://kendo.cdn.telerik.com/2023.2.829/js/kendo.all.min.js"></script>
+
     <style>
-        /* :root {
-                  --color-primary: #6366F1;
-                  --color-background-light: #F3F4F6;
-                  --color-background-dark: #1F2937;
-                  --color-card-light: #FFFFFF;
-                  --color-card-dark: #374151;
-                  --color-text-light: #111827;
-                  --color-text-dark: #F9FAFB;
-                  --color-text-secondary-light: #6B7280;
-                  --color-text-secondary-dark: #9CA3AF;
-                  --color-danger: #EF4444;
-
-                  --font-sans: 'Inter', sans-serif;
-                  --radius-lg: 0.75rem;
-                } */
-
         body {
             font-family: 'Inter', sans-serif;
             background-color: #131239 !important;
         }
 
         h3 {
-            font-family: 'Inter', sans-serif;
             font-weight: 600;
-            /* color: #4B5563; */
             color: white !important;
             font-size: 1.2rem !important;
         }
@@ -73,14 +40,11 @@
             background-color: #222A51 !important;
             color: white !important;
         }
-        /* Ensure Kendo grid is visible on dark card */
-        #grid { margin-top: 8px; }
-        .k-grid { background: #ffffff !important; color: #111827 !important; }
-        .k-grid .k-table-td, .k-grid .k-table-th, .k-grid th, .k-grid td { color: #111827 !important; }
-        .k-pager { background: #ffffff !important; }
+
+        #grid {
+            margin-top: 8px;
+        }
     </style>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -88,178 +52,61 @@
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-                    <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Recent Incidents</h3>
-                @*     <div class="flex items-center space-x-2 mt-4 sm:mt-0">
-                        <button class="text-primary hover:underline text-sm font-medium">View all</button>
-                    </div> *@
+                    <h3 class="text-lg font-semibold">Recent Incidents</h3>
                 </div>
-                <!-- Filters -->
-                <div class="flex flex-wrap items-center gap-3 mb-4">
-                    <span class="text-sm opacity-80">Total: @((Model?.Incidents?.Count ?? 0))</span>
-                    <select id="cameraFilter" style="width: 220px;"></select>
-                    <select id="violationFilter" style="width: 220px;"></select>
-                    <input id="fromDate" type="date" style="width: 180px;" />
-                    <input id="toDate" type="date" style="width: 180px;" />
-                    <button id="clearFilters" class="px-3 py-1 text-sm font-medium rounded bg-gray-200 text-gray-800 hover:bg-gray-300">Clear</button>
-                </div>
-                <div id="grid" class="hidden"></div>
-                <div id="gridError" class="mt-2 text-red-400 text-sm"></div>
-                <div id="fallbackTable" class="overflow-x-auto">
-                    <table id="dtIncidents" class="w-full text-left display">
-                        <thead>
-                            <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
-                                <th class="py-3 px-4 font-medium">Camera Name</th>
-                                <th class="py-3 px-4 font-medium">Camera Id</th>
-                                <th class="py-3 px-4 font-medium">Track Id</th>
-                                <th class="py-3 px-4 font-medium">Missing Labels</th>
-                                <th class="py-3 px-4 font-medium">Violation Type</th>
-                                <th class="py-3 px-4 font-medium">Date</th>
-                                <th class="py-3 px-4 font-medium">Actions</th>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var i in Model.Incidents)
-                            {
-                                <tr class="text-sm">
-                                    <td class="py-3 px-4">@i.CameraName</td>
-                                    <td class="py-3 px-4">@i.CameraId</td>
-                                    <td class="py-3 px-4">@i.TrackId</td>
-                                    <td class="py-3 px-4">@i.MissingLabels</td>
-                                    <td class="py-3 px-4">@i.ViolationType</td>
-                                    <td class="py-3 px-4">@i.Timestamp</td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex gap-2">
-                                            <form asp-controller="Incident" asp-action="Approve" method="post">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="incidentId" value="@i.Id" />
-                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-green-600 text-white hover:bg-green-700">Approve</button>
-                                            </form>
-                                            <form asp-controller="Incident" asp-action="Reject" method="post">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="incidentId" value="@i.Id" />
-                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-red-600 text-white hover:bg-red-700">Reject</button>
-                                            </form>
-                                            <button type="button" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.CameraName).Title("Camera Name");
+                        columns.Bound(p => p.CameraId).Title("Camera Id");
+                        columns.Bound(p => p.TrackId).Title("Track Id");
+                        columns.Bound(p => p.MissingLabels).Title("Missing Labels");
+                        columns.Bound(p => p.ViolationType).Title("Violation Type");
+                        columns.Bound(p => p.Timestamp).Title("Date").Format("{0:yyyy-MM-dd HH:mm}");
+                        columns.Command(command =>
+                        {
+                            command.Custom("Approve").Click("onApproveClick");
+                            command.Custom("Reject").Click("onRejectClick");
+                        }).Title("Actions").Width(200);
+                    })
+                    .Pageable()
+                    .Sortable()
+                    .Scrollable()
+                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                    .HtmlAttributes(new { style = "height:500px;" })
+                    .DataSource(ds => ds
+                    .Ajax()
+                    .PageSize(20)
+                    .Read(read => read.Action("GetIncidents", "Incident"))
+                    )
+                    )
+
             </div>
         </main>
-        <footer class="mt-8 flex justify-between items-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
-            <div class="flex items-center">
-            </div>
-        </footer>
     </div>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="text-center">
-                <img id="modalImage" src="" alt="Incident Image" class="max-w-full max-h-[70vh] mx-auto rounded-lg shadow-lg" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4='; this.alt='Image not found';">
-            </div>
-        </div>
-    </div>
+    <script>
+        function onApproveClick(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            postAction('@Url.Action("Approve", "Incident")', dataItem.Id);
+        }
 
-    <form id="incidentActionForm" method="post" class="hidden">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="incidentId" id="incidentIdInput" />
-    </form>
+        function onRejectClick(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            postAction('@Url.Action("Reject", "Incident")', dataItem.Id);
+        }
 
-    @section Scripts {
-        <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-        <script>
-            // DataTables initialization and external filters
-            function showImage(imagePath, label) {
-                document.getElementById('modalImage').src = imagePath;
-                document.getElementById('modalTitle').textContent = 'Incident: ' + label;
-                document.getElementById('imageModal').classList.remove('hidden');
-            }
-
-            function closeModal() {
-                document.getElementById('imageModal').classList.add('hidden');
-            }
-
-            // Close modal when clicking outside
-            document.getElementById('imageModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
-
-            // Close modal with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
-            });
-
-            $(function(){
-                // Build unique options
-                function buildUniqueOptions(colIndex, selectId, placeholder){
-                    var set = new Set();
-                    $('#dtIncidents tbody tr').each(function(){
-                        var v = $(this).find('td').eq(colIndex).text().trim();
-                        if (v) set.add(v);
-                    });
-                    var $s = $(selectId); $s.empty(); $s.append('<option value="">'+placeholder+'</option>');
-                    Array.from(set).sort().forEach(function(v){ $s.append('<option>'+ $('<div>').text(v).html() +'</option>'); });
-                }
-                buildUniqueOptions(0, '#cameraFilter', 'All Cameras');
-                buildUniqueOptions(4, '#violationFilter', 'All Violations');
-
-                var dt = $('#dtIncidents').DataTable({
-                    pageLength: 20,
-                    order: [[5, 'desc']],
-                    language: { search: 'Search:' }
-                });
-
-                // Date range filter
-                $.fn.dataTable.ext.search.push(function(settings, data){
-                    if (settings.nTable.id !== 'dtIncidents') return true;
-                    var min = $('#fromDate').val();
-                    var max = $('#toDate').val();
-                    var dateStr = data[5] || '';
-                    if (!min && !max) return true;
-                    var rowDate = new Date(dateStr);
-                    if (isNaN(rowDate)) return true;
-                    if (min && rowDate < new Date(min + 'T00:00:00')) return false;
-                    if (max && rowDate > new Date(max + 'T23:59:59')) return false;
-                    return true;
-                });
-
-                $('#cameraFilter').on('change', function(){
-                    var v = this.value;
-                    dt.column(0).search(v ? '^'+$.fn.dataTable.util.escapeRegex(v)+'$' : '', true, false).draw();
-                });
-                $('#violationFilter').on('change', function(){
-                    var v = this.value;
-                    dt.column(4).search(v ? '^'+$.fn.dataTable.util.escapeRegex(v)+'$' : '', true, false).draw();
-                });
-                $('#fromDate,#toDate').on('change', function(){ dt.draw(); });
-                $('#clearFilters').on('click', function(){
-                    $('#cameraFilter').val('');
-                    $('#violationFilter').val('');
-                    $('#fromDate').val('');
-                    $('#toDate').val('');
-                    dt.search('').columns().search('').draw();
-                });
-            });
-        </script>
-    }
+        function postAction(url, incidentId) {
+            var form = $('<form/>', { action: url, method: 'post' })
+                .append($('<input/>', { type: 'hidden', name: 'incidentId', value: incidentId }))
+                .append('@Html.AntiForgeryToken()');
+            form.appendTo('body').submit();
+        }
+    </script>
 
 </body>
-
 </html>

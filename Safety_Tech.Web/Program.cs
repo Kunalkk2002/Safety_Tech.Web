@@ -47,7 +47,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Add scoped services for dependency injection
 builder.Services.AddApplicationServices();
-
+builder.Services.AddKendo();
 // Add AutoMapper for object mapping
 builder.Services.AddAutoMapper(typeof(Program)); // Note: Change from Startup to Program for consistency
 

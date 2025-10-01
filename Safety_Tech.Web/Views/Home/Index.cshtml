@@ -133,10 +133,10 @@
                 <!-- Filters -->
                 <div class="flex flex-wrap items-center gap-3 mb-4">
                     <span class="text-sm opacity-80">Total: @((Model?.Incidents?.Count ?? 0))</span>
-                    <select id="cameraFilter" style="width: 220px;"></select>
-                    <select id="violationFilter" style="width: 220px;"></select>
-                    <input id="fromDate" type="date" style="width: 180px;" />
-                    <input id="toDate" type="date" style="width: 180px;" />
+                    <select id="cameraFilter" style="width: 220px;color:black;"></select>
+                    <select id="violationFilter" style="width: 220px;color:black;"></select>
+                    <input id="fromDate" type="date" style="width: 180px;color:black;" />
+                    <input id="toDate" type="date" style="width: 180px;color:black;" />
                     <button id="clearFilters" class="px-3 py-1 text-sm font-medium rounded bg-gray-200 text-gray-800 hover:bg-gray-300">Clear</button>
                 </div>
                 <div id="grid" class="hidden"></div>
@@ -188,7 +188,7 @@
             </div>
             <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
                 <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4 ">
-                    Incident
+                    Violation
                     Type
                 </h3>
                 <div class="space-y-4">

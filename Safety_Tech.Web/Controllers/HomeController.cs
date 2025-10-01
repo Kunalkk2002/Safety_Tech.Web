@@ -8,6 +8,7 @@ using Safety_Tech.Services.CSVFile;
 using Microsoft.EntityFrameworkCore;
 using Safety_Tech.DTOs.incidents;
 using Safety_Tech.Models.ViewModels;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace Safety_Tech.Web.Controllers
 {
@@ -44,11 +45,24 @@ namespace Safety_Tech.Web.Controllers
             var PotentialInsidents = _context.Incidents.Count();
 
             var Incidents = await _context.Incidents
-                 .Include(ai => ai.Approver)
+                .Where(x => !x.IsApprove)
+                .ToListAsync();
+
+            var ConfirmIncidents = await _context.Incidents
+                .Where(x => x.IsApprove && x.ApproveBy != null)
                 .ToListAsync();
 
             var potentialIncidentsCount = _context.Incidents
+                .Where(x => !x.IsApprove)
+            .Count();
+
+
+            var currentYear = DateTime.Now.Year;
+
+            var incidentsCurrentYear = _context.Incidents
+                .Where(x => x.Timestamp.Year == currentYear)
                 .Count();
+
 
             var ViolationTypes = _context.Incidents
                                      .Select(i => i.ViolationType)
@@ -59,8 +73,9 @@ namespace Safety_Tech.Web.Controllers
             {
                 Incidents = Incidents,
                 PotentialIncidentsCount = potentialIncidentsCount,
-                ConfirmIncidentsCount = Incidents.Count,
-                ViolationTypes = ViolationTypes
+                ConfirmIncidentsCount = ConfirmIncidents.Count,
+                ViolationTypes = ViolationTypes,
+                incidentsCurrentYear = incidentsCurrentYear
             };
 
             string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
@@ -68,8 +83,7 @@ namespace Safety_Tech.Web.Controllers
             _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
    
             return View(viewModel);
-         
-           
+                  
         }
 
 

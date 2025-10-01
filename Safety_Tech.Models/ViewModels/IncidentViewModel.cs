@@ -12,6 +12,7 @@ namespace Safety_Tech.Models.ViewModels
         public List<Incidents> Incidents { get; set; }
         public int PotentialIncidentsCount { get; set; }
         public int ConfirmIncidentsCount { get; set; }
+        public int incidentsCurrentYear { get; set; }
 
         public List<string>? ViolationTypes { get; set; }
 

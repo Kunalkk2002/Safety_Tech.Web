@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Safety_Tech.Services.UserServices;
-using Safety_Tech.Services.RoleServices;
 using Safety_Tech.Services.CSVFile;
+using Safety_Tech.Services.UserServices;
 
 namespace Safety_Tech.Services
 {
@@ -17,9 +16,10 @@ namespace Safety_Tech.Services
         /// <returns>The updated service collection.</returns>
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRoleService, RoleService>();
+
             // Add more services here as needed
+
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICSVFile, Safety_Tech.Services.CSVFile.CSVFile>();
             return services;
         }

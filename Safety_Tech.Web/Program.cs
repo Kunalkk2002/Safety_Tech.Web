@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Safety_Tech.Models.Models;
 using Safety_Tech.Services;
-using Safety_Tech.Services.RoleServices;
 using Safety_Tech.Services.UserServices;
 using NLog.Extensions.Logging;
 using System;

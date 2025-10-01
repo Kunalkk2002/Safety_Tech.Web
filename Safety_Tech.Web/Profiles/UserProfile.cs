@@ -8,12 +8,7 @@ namespace Safety_Tech.Web.Profiles
     {
         public UserProfile()
         {
-            CreateMap<User, AddUserDto>();
-            CreateMap<AddUserDto, User>();
-            CreateMap<GetUserDto, User>();
-            CreateMap<User, GetUserDto>();
-            CreateMap<UpdateUserDto, User>();
-            CreateMap<User, UpdateUserDto>();
+       
         }
     }
 } 

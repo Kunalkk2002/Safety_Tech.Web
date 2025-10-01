@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Safety_Tech.Models.Models;
 
+[Table("Incidents")]
 public partial class Incidents
 {
     public int Id { get; set; }
@@ -23,8 +25,6 @@ public partial class Incidents
     public bool IsApprove { get; set; }
     public string ApproveBy { get; set; } = string.Empty; // Admin user Id from AspNetUsers
     public IdentityUser? Approver { get; set; }
-
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 

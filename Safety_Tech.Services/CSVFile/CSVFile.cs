@@ -87,7 +87,7 @@ namespace Safety_Tech.Services.CSVFile
 
                         using var scope = _scopeFactory.CreateScope();
                         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataContext>();
-                        await dbContext.Objectdetections.AddRangeAsync(items, cancellationToken);
+                        await dbContext.Incidents.AddRangeAsync(items, cancellationToken);
                         totalSaved += await dbContext.SaveChangesAsync(cancellationToken);
                     }
                     catch (Exception ex)

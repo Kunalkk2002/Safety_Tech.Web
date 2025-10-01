@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Safety_Tech.Models.Models;
 
@@ -11,9 +12,11 @@ using Safety_Tech.Models.Models;
 namespace Safety_Tech.Models.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    partial class ApplicationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20251001063906_DeleteUnnecessaryTables")]
+    partial class DeleteUnnecessaryTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,6 +223,35 @@ namespace Safety_Tech.Models.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Safety_Tech.Models.Models.ApprovedIncident", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApproveBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("IncidentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsApprove")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproveBy")
+                        .HasDatabaseName("IX_ApprovedIncident_ApproveBy");
+
+                    b.HasIndex("IncidentId")
+                        .HasDatabaseName("IX_ApprovedIncident_IncidentId");
+
+                    b.ToTable("ApprovedIncident", (string)null);
+                });
+
             modelBuilder.Entity("Safety_Tech.Models.Models.Incidents", b =>
                 {
                     b.Property<int>("Id")
@@ -266,7 +298,7 @@ namespace Safety_Tech.Models.Migrations
 
                     b.HasIndex("ApproverId");
 
-                    b.ToTable("Incidents", (string)null);
+                    b.ToTable("Objectdetection", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -318,6 +350,25 @@ namespace Safety_Tech.Models.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Safety_Tech.Models.Models.ApprovedIncident", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Approver")
+                        .WithMany()
+                        .HasForeignKey("ApproveBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Safety_Tech.Models.Models.Incidents", "Incident")
+                        .WithMany()
+                        .HasForeignKey("IncidentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("Incident");
                 });
 
             modelBuilder.Entity("Safety_Tech.Models.Models.Incidents", b =>

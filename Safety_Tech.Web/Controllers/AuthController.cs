@@ -11,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Safety_Tech.DTOs.UserDTOs;
-using Safety_Tech.Services.RoleServices;
 using Safety_Tech.Services.UserServices;
 using Safety_Tech.Web.Helper;
 using Safety_Tech.Models.Models;
@@ -23,14 +22,12 @@ namespace Safety_Tech.Web.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userServices;
-        private readonly IRoleService _roleService;
         private readonly IConfiguration _config;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthController(IUserService userServices, IRoleService roleService, ILogger<UserController> logger, IConfiguration config, UserManager<IdentityUser> userManager)
+        public AuthController(IUserService userServices, ILogger<UserController> logger, IConfiguration config, UserManager<IdentityUser> userManager)
         {
             _userServices = userServices;
-            _roleService = roleService;
             _logger = logger;
             _config = config;
             _userManager = userManager;
@@ -233,21 +230,7 @@ namespace Safety_Tech.Web.Controllers
                 }
             return false;
         }
-        /// <summary>
-        /// Validate user and generate jwt token
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
-        {
-            var userDto = await _userServices.ValidateRefreshToken(refreshToken);
-            if (userDto == null)
-                return Unauthorized();
-            var newJwt = GenerateJWTToken(userDto);
-            var newRefreshToken = await _userServices.IssueRefreshToken(userDto.Id);
-            return Ok(new { access_token = newJwt, refresh_token = newRefreshToken });
-        }
+  
         /// <summary>
         /// 
         /// </summary>

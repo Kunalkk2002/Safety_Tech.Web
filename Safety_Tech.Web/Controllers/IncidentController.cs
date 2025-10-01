@@ -27,7 +27,7 @@ namespace Safety_Tech.Web.Controllers
         public IActionResult Details()
         {
             // Fetch all records from Objectdetection table
-            var records = _context.Objectdetections
+            var records = _context.Incidents
                  .Where(o => !o.IsApprove )
                                   .OrderByDescending(o => o.CreatedAt) 
                                   .ToList();
@@ -57,7 +57,7 @@ namespace Safety_Tech.Web.Controllers
                 return Unauthorized();
             }
 
-            var incident = await _context.Objectdetections.FindAsync(incidentId);
+            var incident = await _context.Incidents.FindAsync(incidentId);
             if (incident == null)
             {
                 return NotFound();
@@ -66,7 +66,7 @@ namespace Safety_Tech.Web.Controllers
             incident.ApproveBy = user.Id;
             incident.IsApprove = true;
 
-            _context.Objectdetections.Update(incident); // optional, since tracked entity
+            _context.Incidents.Update(incident); // optional, since tracked entity
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Details), new { id = incidentId });
@@ -83,7 +83,7 @@ namespace Safety_Tech.Web.Controllers
                 return Unauthorized();
             }
 
-            var incident = await _context.Objectdetections.FindAsync(incidentId);
+            var incident = await _context.Incidents.FindAsync(incidentId);
             if (incident == null)
             {
                 return NotFound();

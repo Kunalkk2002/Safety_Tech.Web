@@ -118,7 +118,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                            @foreach (var item in Model.ApprovedIncidents)
+                        @*     @foreach (var item in Model.ApprovedIncidents)
                             {
                                 <tr class="text-sm">
                                     <td class="py-3 px-4">2023-10-26</td>
@@ -128,7 +128,7 @@
                                     <td class="py-3 px-4">@item.Approver.UserName</td>
                                     <td class="py-3 px-4"><span class=@(item.IsApprove ? "text-green-500" : "text-red-500")>@(item.IsApprove ? "Approve" : "Reject")</span></td>
                                 </tr>
-                            }
+                            } *@
                         </tbody>
                     </table>
                 </div>

@@ -41,23 +41,20 @@ namespace Safety_Tech.Web.Controllers
         //[Authorize(Roles =UserSystemRoles.Admin)]
         public async Task<IActionResult> Index()
         {
-            var PotentialInsidents = _context.Objectdetections
-              .Where(o => !_context.ApprovedIncidents
-                      .Any(a => a.IncidentId == o.Id))
+            var PotentialInsidents = _context.Incidents
+              
                                .Count();
 
-            var confirmIncidents = await _context.ApprovedIncidents
+            var confirmIncidents = await _context.Incidents
                  .Include(ai => ai.Approver)
                 .ToListAsync();
-           
-            var potentialIncidentsCount = _context.Objectdetections
-                .Where(o => !_context.ApprovedIncidents
-                    .Any(a => a.IncidentId == o.Id))
+
+            var potentialIncidentsCount = _context.Incidents
                 .Count();
 
             var viewModel = new IncidentViewModel
             {
-                ApprovedIncidents = confirmIncidents,
+               // ApprovedIncidents = confirmIncidents,
                 PotentialIncidentsCount = potentialIncidentsCount,
                 ConfirmIncidentsCount = confirmIncidents.Count
             };
@@ -74,36 +71,36 @@ namespace Safety_Tech.Web.Controllers
 
         [HttpGet]
         //[Authorize(Roles =UserSystemRoles.Admin)]
-        public async Task<IActionResult> Index1()
-        {
-            var PotentialInsidents = _context.Objectdetections
-              .Where(o => !_context.ApprovedIncidents
-                      .Any(a => a.IncidentId == o.Id))
-                               .Count();
-            var confirmIncidents = await _context.ApprovedIncidents
-                 .Include(ai => ai.Approver)
-                .ToListAsync();
+        //public async Task<IActionResult> Index1()
+        //{
+        //    var PotentialInsidents = _context.Objectdetections
+        //      .Where(o => !_context.ApprovedIncidents
+        //              .Any(a => a.IncidentId == o.Id))
+        //                       .Count();
+        //    var confirmIncidents = await _context.ApprovedIncidents
+        //         .Include(ai => ai.Approver)
+        //        .ToListAsync();
 
-            var potentialIncidentsCount = _context.Objectdetections
-                .Where(o => !_context.ApprovedIncidents
-                    .Any(a => a.IncidentId == o.Id))
-                .Count();
+        //    var potentialIncidentsCount = _context.Objectdetections
+        //        .Where(o => !_context.ApprovedIncidents
+        //            .Any(a => a.IncidentId == o.Id))
+        //        .Count();
 
-            var viewModel = new IncidentViewModel
-            {
-                ApprovedIncidents = confirmIncidents,
-                PotentialIncidentsCount = potentialIncidentsCount,
-                ConfirmIncidentsCount = confirmIncidents.Count
-            };
+        //    var viewModel = new IncidentViewModel
+        //    {
+        //        ApprovedIncidents = confirmIncidents,
+        //        PotentialIncidentsCount = potentialIncidentsCount,
+        //        ConfirmIncidentsCount = confirmIncidents.Count
+        //    };
 
-            string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
-            string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
-            _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
+        //    string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
+        //    string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
+        //    _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
 
-            return View(viewModel);
+        //    return View(viewModel);
 
 
-        }
+        //}
 
         /// <summary>
         /// Displays the privacy page. Only accessible by users with the 'User' role.
@@ -123,29 +120,6 @@ namespace Safety_Tech.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        /// <summary>
-        /// Displays the HTML controls demo form.
-        /// </summary>
-        [HttpGet]
-        public IActionResult HtmlControlsDemo()
-        {
-            return View(new HtmlControlsDemo());
-        }
-
-        /// <summary>
-        /// Processes the HTML controls demo form submission.
-        /// </summary>
-        [HttpPost]
-        public IActionResult HtmlControlsDemo(HtmlControlsDemo model)
-        {
-            if (ModelState.IsValid)
-            {
-                ViewBag.Message = "Form submitted successfully!";
-                return View(model);
-            }
-            return View(model);
         }
 
 

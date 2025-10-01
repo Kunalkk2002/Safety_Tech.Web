@@ -8,8 +8,7 @@ namespace Safety_Tech.Web.Profiles
     {
         public RoleProfile()
         {
-            CreateMap<Role, AddRoleDto>();
-            CreateMap<AddRoleDto, Role>();
+            
         }
     }
 } 

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Safety_Tech.DTOs.incidents;
 using Safety_Tech.Models.ViewModels;
 using DocumentFormat.OpenXml.Bibliography;
+using System.Configuration;
 
 namespace Safety_Tech.Web.Controllers
 {
@@ -20,16 +21,17 @@ namespace Safety_Tech.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ICSVFile _csvFileService;
         private readonly ApplicationDataContext _context;
-
+        private readonly IConfiguration _configuration;
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="logger">The logger instance.</param>
-        public HomeController(ILogger<HomeController> logger, ICSVFile csvFileService,ApplicationDataContext context)
+        public HomeController(ILogger<HomeController> logger, ICSVFile csvFileService,ApplicationDataContext context, IConfiguration configuration)
         {
             _logger = logger;
             _csvFileService = csvFileService;
             _context = context;
+            _configuration = configuration;
         }
 
 
@@ -42,8 +44,8 @@ namespace Safety_Tech.Web.Controllers
         //[Authorize(Roles =UserSystemRoles.Admin)]
         public async Task<IActionResult> Index()
         {
-            string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
-            string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
+            string sourceFolderPath = _configuration["FolderPaths:SourceFolder"];
+            string processedFolderPath = _configuration["FolderPaths:ProcessedFolder"];
             _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
 
             var PotentialInsidents = _context.Incidents.Count();

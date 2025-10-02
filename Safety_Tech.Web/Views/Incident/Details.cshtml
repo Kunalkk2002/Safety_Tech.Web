@@ -151,9 +151,6 @@
                    .Title("Date")
                    .Format("{0:yyyy-MM-dd}")
                    .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
-   
-
-
             columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
             columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
             columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
@@ -172,10 +169,9 @@
         .DataSource(dataSource => dataSource
             .Ajax()
             .PageSize(10)
-            .ServerOperation(true)
+            .ServerOperation(false)
         )
         .BindTo(Model.Incidents)
     )
-
 </body>
 </html>

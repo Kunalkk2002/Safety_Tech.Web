@@ -70,10 +70,46 @@ namespace Safety_Tech.Web.Controllers
                 .Count();
 
 
+
             var ViolationTypes = _context.Incidents
                                      .Select(i => i.ViolationType)
                                      .Distinct()
                                      .ToList();
+
+            var thisYear = DateTime.Now.Year;
+            var today = DateTime.Now;
+
+            // Get incidents grouped by year
+            var incidentCounts = await _context.Incidents
+                .GroupBy(i => i.Timestamp.Year)
+                .Select(g => new
+                {
+                    Year = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            // Get counts
+            int thisYearCount = incidentCounts.FirstOrDefault(x => x.Year == thisYear)?.Count ?? 0;
+            int lastYearCount = incidentCounts.FirstOrDefault(x => x.Year == thisYear - 1)?.Count ?? 0;
+
+            // Frequency (days per incident this year)
+            double daysThisYear = (today - new DateTime(thisYear, 1, 1)).TotalDays;
+            double frequencyThisYear = thisYearCount > 0 ? daysThisYear / thisYearCount : 0;
+
+            // % Change vs last year
+            double percentChange = lastYearCount > 0
+                ? ((double)thisYearCount - lastYearCount) / lastYearCount * 100
+                : 0;
+
+            // Prepare result
+            var result = new
+            {
+                ThisYearIncidents = thisYearCount,
+                LastYearIncidents = lastYearCount,
+                FrequencyDays = Math.Round(frequencyThisYear, 1), // e.g. 6.8d
+                PercentChange = Math.Round(percentChange, 2)     // e.g. -23.00%
+            };
 
             var viewModel = new IncidentViewModel
             {
@@ -81,7 +117,8 @@ namespace Safety_Tech.Web.Controllers
                 PotentialIncidentsCount = potentialIncidentsCount,
                 ConfirmIncidentsCount = ConfirmIncidents.Count,
                 ViolationTypes = ViolationTypes,
-                incidentsCurrentYear = incidentsCurrentYear
+                incidentsCurrentYear = incidentsCurrentYear,
+                FrequencyDays = (int)Math.Round(frequencyThisYear, 1)
             };
 
            

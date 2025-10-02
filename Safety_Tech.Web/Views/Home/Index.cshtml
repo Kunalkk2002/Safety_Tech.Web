@@ -126,6 +126,11 @@
                 display: none !important;
             }
 
+            #grid .k-input-button,
+            #grid .k-clear-value {
+                display: none !important;
+            }
+
             /* Grid rows */
             #grid .k-grid-content tr {
                 background-color: #222A51;
@@ -221,7 +226,7 @@
                     <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark text-right">
                         frequency
                     </h3>
-                    <p class="text-5xl font-bold mt-2 text-right">6.8d</p>
+                    <p class="text-5xl font-bold mt-2 text-right">@Model.FrequencyDays d</p>
                     <div class="flex items-center justify-end mt-1">
                         <span class="material-icons text-green-500 text-base">arrow_downward</span>
                         <p class="text-sm text-green-500 ml-1">23% v last year</p>

@@ -30,8 +30,8 @@ namespace Safety_Tech.Web.Controllers
             var PotentialInsidents = _context.Incidents.Count();
 
             var Incidents = await _context.Incidents
-                 .Include(ai => ai.Approver)
-                .ToListAsync();
+                  .Where(x => !x.IsApprove)
+                  .ToListAsync();
 
             var potentialIncidentsCount = _context.Incidents
                 .Count();
@@ -47,7 +47,7 @@ namespace Safety_Tech.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Approve(Guid incidentId)
         {
@@ -73,7 +73,7 @@ namespace Safety_Tech.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Reject(Guid incidentId)
         {

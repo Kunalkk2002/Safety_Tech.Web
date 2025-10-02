@@ -42,6 +42,10 @@ namespace Safety_Tech.Web.Controllers
         //[Authorize(Roles =UserSystemRoles.Admin)]
         public async Task<IActionResult> Index()
         {
+            string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
+            string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
+            _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
+
             var PotentialInsidents = _context.Incidents.Count();
 
             var Incidents = await _context.Incidents
@@ -78,9 +82,7 @@ namespace Safety_Tech.Web.Controllers
                 incidentsCurrentYear = incidentsCurrentYear
             };
 
-            string sourceFolderPath = "D:\\DIBS Project\\csvFiles";
-            string processedFolderPath = "D:\\DIBS Project\\csvFiles\\ProcessFolder";
-            _csvFileService.ProcessCsvFilesAsync(sourceFolderPath, processedFolderPath);
+           
    
             return View(viewModel);
                   

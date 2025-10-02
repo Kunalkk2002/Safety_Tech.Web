@@ -14,7 +14,9 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Kendo UI JS (match version) -->
-    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script> 
+   
+ 
     <!-- Kendo ASP.NET MVC wrappers helper (provides kendo.syncReady) -->
     <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.aspnetmvc.min.js"></script>
 
@@ -148,9 +150,10 @@
                    .Title("Violation Type")
                    .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
             columns.Bound(p => p.Timestamp)
-                   .Title("Date")
-                   .Format("{0:yyyy-MM-dd}")
-                   .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                .Title("Date")
+                .Format("{0:yyyy-MM-dd}")
+                .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(true)));
+
             columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
             columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
             columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
@@ -158,14 +161,29 @@
                    .Title("Actions")
                    .Encoded(false)
                    .Width(260)
-                   .ClientTemplate("<div style='display:flex;gap:6px;align-items:center;'><form method='post' action='/Incident/Approve'><input type='hidden' name='incidentId' value='#= Id #' /><button type='submit' class='k-button btn-approve'>Approve</button></form><form method='post' action='/Incident/Reject'><input type='hidden' name='incidentId' value='#= Id #' /><button type='submit' class='k-button btn-reject'>Reject</button></form><a href='/Incident/Details/#= Id #' class='k-button btn-view'>View</a></div>")
+
+            .ClientTemplate(
+                        @"<div style='display:flex;gap:6px;align-items:center;'>
+                    <form method='post' action='/Incident/Approve'>
+                    <input type='hidden' name='incidentId' value='#= Id #' />
+                    <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                    <button type='submit' class='k-button btn-approve'>Approve</button>
+                    </form>
+                    <form method='post' action='/Incident/Reject'>
+                    <input type='hidden' name='incidentId' value='#= Id #' />
+                    <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                    <button type='submit' class='k-button btn-reject'>Reject</button>
+                    </form>
+                    <a href='/Incident/Details/#= Id #' class='k-button btn-view'>View</a>
+                    </div>"
+                            )
                    .Filterable(false);
         })
         .Pageable()
         .Sortable()
         .Scrollable(s => s.Enabled(false))
         .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
-        .HtmlAttributes(new { style = "height:520px;" })
+        .HtmlAttributes(new { style = "auto" })
         .DataSource(dataSource => dataSource
             .Ajax()
             .PageSize(10)

@@ -12,6 +12,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
           rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!-- Kendo UI CSS (match ASP.NET Core MVC wrapper version) -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.117/styles/kendo.default-v2.min.css" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Kendo UI JS (match version) -->
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+
+
+    <!-- Kendo ASP.NET MVC wrappers helper (provides kendo.syncReady) -->
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.aspnetmvc.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -73,6 +85,102 @@
             background-color: #222A51 !important;
             color: white !important;
         }
+
+            /* Grid container */
+        #grid {
+            background-color: #222A51;
+            border-radius: 0.75rem;
+            padding: 10px;
+        }
+
+            /* Grid header */
+            #grid .k-grid-header th {
+                background-color: #131239 !important;
+                color: white !important;
+                border-color: #374151 !important;
+            }
+
+            /* Ensure header + filter row surfaces are dark */
+            #grid .k-grid-header,
+            #grid .k-filter-row,
+            #grid .k-filter-row .k-table-td,
+            #grid .k-table-th {
+                background-color: #131239 !important;
+                color: white !important;
+                border-color: #374151 !important;
+            }
+
+            /* Filter row inputs */
+            #grid .k-grid-header .k-textbox,
+            #grid .k-grid-header .k-dropdown,
+            #grid .k-grid-header .k-picker-wrap,
+            #grid .k-grid-header .k-input-inner {
+                background-color: #374151 !important;
+                color: white !important;
+                border-color: #4B5563 !important;
+            }
+
+            /* Hide Kendo clear (cross) buttons inside filter inputs */
+            #grid .k-input-button,
+            #grid .k-clear-value {
+                display: none !important;
+            }
+
+            /* Grid rows */
+            #grid .k-grid-content tr {
+                background-color: #222A51;
+                color: white;
+            }
+
+                #grid .k-grid-content tr.k-alt {
+                    background-color: #1F233F;
+                }
+
+            /* Dark background for empty content area */
+            #grid .k-grid-content,
+            #grid .k-grid-content-locked {
+                background-color: #222A51 !important;
+            }
+
+            /* Body cell borders/text */
+            #grid .k-table,
+            #grid .k-table tbody,
+            #grid .k-table tr,
+            #grid .k-table-td {
+                background-color: transparent !important;
+                color: white !important;
+                border-color: #2C3464 !important;
+            }
+
+            /* Pager */
+            #grid .k-pager {
+                background-color: #222A51 !important;
+                color: white !important;
+            }
+
+                #grid .k-pager .k-link { color: white !important; }
+
+        /* Buttons inside grid */
+        .k-button { border-radius: 0.75rem !important; font-size: 0.875rem; font-weight: 500; }
+        .btn-approve { background-color: #16A34A; color: white; }
+        .btn-reject { background-color: #DC2626; color: white; }
+        .btn-view { background-color: #2563EB; color: white; }
+        .btn-approve, .btn-reject, .btn-view { padding: 4px 12px; border: 0; display: inline-block; }
+        a.k-button.btn-view { text-decoration: none; }
+        .btn-approve:hover { background-color: #15803D; }
+        .btn-reject:hover { background-color: #B91C1C; }
+        .btn-view:hover { background-color: #1D4ED8; }
+
+        /* Make sure the grid draws horizontal separators */
+        #grid .k-table td,
+        #grid .k-grid-content td {
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+
+        /* Optional: remove last row border */
+        #grid .k-table tr:last-child td {
+            border-bottom: none !important;
+        }
     </style>
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
@@ -131,7 +239,7 @@
                     </div>
                 </div>
                 <!-- Filters -->
-                <div class="flex flex-wrap items-center gap-3 mb-4">
+               @*  <div class="flex flex-wrap items-center gap-3 mb-4">
                     <span class="text-sm opacity-80">Total: @((Model?.Incidents?.Count ?? 0))</span>
                     <select id="cameraFilter" style="width: 220px;color:black;"></select>
                     <select id="violationFilter" style="width: 220px;color:black;"></select>
@@ -184,7 +292,59 @@
                             }
                         </tbody>
                     </table>
-                </div>
+                </div> *@
+
+                @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.CameraName)
+                        .Title("Camera Name")
+                        .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
+                        columns.Bound(p => p.ViolationType)
+                        .Title("Violation Type")
+                        .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
+                        columns.Bound(p => p.Timestamp)
+                        .Title("Date")
+                        .Format("{0:yyyy-MM-dd}")
+                        .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(true)));
+
+                        columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
+                        columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
+                        columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
+                        columns.Bound(p => p.Id)
+                        .Title("Actions")
+                        .Encoded(false)
+                        .Width(260)
+
+                        .ClientTemplate(
+                                @"<div style='display:flex;gap:6px;align-items:center;'>
+                            <form method='post' action='/Incident/Approve'>
+                            <input type='hidden' name='incidentId' value='#= Id #' />
+                            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                            <button type='submit' class='k-button btn-approve'>Approve</button>
+                            </form>
+                            <form method='post' action='/Incident/Reject'>
+                            <input type='hidden' name='incidentId' value='#= Id #' />
+                            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                            <button type='submit' class='k-button btn-reject'>Reject</button>
+                            </form>
+                            <a href='/Incident/Details/#= Id #' class='k-button btn-view'>View</a>
+                            </div>"
+                                    )
+                        .Filterable(false);
+                    })
+                    
+                    .Sortable()
+                    .Scrollable(s => s.Enabled(false))
+                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                    .HtmlAttributes(new { style = "auto" })
+                    .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .ServerOperation(false)
+                    )
+                    .BindTo(Model.Incidents.Take(10))
+                    )
             </div>
             <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md col-span-1 md:col-span-2 stats-cards">
                 <h3 class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-4 ">

@@ -57,7 +57,7 @@ namespace Safety_Tech.Services.CSVFile
                             .Where(f => f.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
                                      || f.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase));
 
-                
+
 
                 foreach (var file in csvFiles)
                 {
@@ -95,21 +95,18 @@ namespace Safety_Tech.Services.CSVFile
                             //    }
                             //}
 
-                            try
+                            using var scope = _scopeFactory.CreateScope();
+                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataContext>();
+                            await dbContext.Incidents.AddRangeAsync(items, cancellationToken);
+                            totalSaved += await dbContext.SaveChangesAsync(cancellationToken);
+
+                            var destination = Path.Combine(processedFolderPath, Path.GetFileName(file));
+                            if (File.Exists(destination))
                             {
-                                using var scope = _scopeFactory.CreateScope();
-                                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataContext>();
-                                await dbContext.Incidents.AddRangeAsync(items, cancellationToken);
-                                totalSaved += await dbContext.SaveChangesAsync(cancellationToken);
-            return totalSaved;
-
+                                File.Delete(destination);
                             }
-                            catch (Exception ex)
-                            {
-
-                            }
-
-
+                            File.Move(file, destination);
+                            return totalSaved;
                         }
                         catch (Exception ex)
                         {
@@ -117,12 +114,7 @@ namespace Safety_Tech.Services.CSVFile
                         }
                     }
 
-                    var destination = Path.Combine(processedFolderPath, Path.GetFileName(file));
-                    if (File.Exists(destination))
-                    {
-                        File.Delete(destination);
-                    }
-                    File.Move(file, destination);
+
                 }
 
 
@@ -131,7 +123,7 @@ namespace Safety_Tech.Services.CSVFile
             {
 
             }
-           
+
             return totalSaved;
         }
 
@@ -175,13 +167,20 @@ namespace Safety_Tech.Services.CSVFile
                         Timestamp = timestamp,
                         TrackId = columns[4]?.Trim() ?? string.Empty,
                         MissingLabels = columns[5]?.Trim() ?? string.Empty,
-                        ViolationType = columns[6]?.Trim() ?? string.Empty
+                        ViolationType = columns[6]?.Trim() ?? string.Empty,
+
+                        //Image = columns[7]?.Trim() ?? string.Empty,
+                        //XMin = ParseDouble(columns[8]?.Trim()),
+                        //YMin = ParseDouble(columns[9]?.Trim()),
+                        //XMax = ParseDouble(columns[10]?.Trim()),
+                        //YMax = ParseDouble(columns[11]?.Trim()),
+
                     });
                 }
             }
             else if (extension == ".xlsx")
             {
-                
+
                 using var workbook = new XLWorkbook(filePath);
                 var worksheet = workbook.Worksheets.First();
 
@@ -261,6 +260,24 @@ namespace Safety_Tech.Services.CSVFile
                 else
                 {
                     bmp.Save(destFile);
+                }
+                // Additionally save to wwwroot/processImage for web access
+                try
+                {
+                    var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "processImage");
+                    Directory.CreateDirectory(wwwrootPath);
+
+                    var wwwrootFile = Path.Combine(wwwrootPath, fileName + "_boxed" + ext);
+
+                    if (format != null)
+                        bmp.Save(wwwrootFile, format);
+                    else
+                        bmp.Save(wwwrootFile);
+
+                }
+                catch
+                {
+                    // ignore wwwroot save errors, keep your existing flow safe
                 }
 
                 return destFile;

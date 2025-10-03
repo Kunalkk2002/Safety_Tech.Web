@@ -226,8 +226,9 @@
         #grid .k-grid-header,
         #grid .k-grid-header th,
         #grid .k-table-th {
-            background-color: transparent !important;
-            color: black !important;
+            background-color: white !important;
+          
+            color: rgb(107 114 128) !important;
             border-bottom: 1px solid #374151 !important; /* keep only bottom border */
             border-right: none !important; /* remove vertical white lines */
         }
@@ -256,6 +257,10 @@
 
         .k-grid-dark .k-grid-content::-webkit-scrollbar-track {
             background: #1e1e1e;
+        }
+
+        .k-grid-header-menu {
+            color: rgb(107 114 128) !important;
         }
     </style>
     <!-- DataTables CSS -->
@@ -360,7 +365,6 @@
                     .Height("auto")
                     .Sortable()
                     .Filterable()
-                    .Scrollable()
                     .HtmlAttributes(new { style = "auto" })
                     .DataSource(dataSource => dataSource
                     .Ajax()
@@ -422,7 +426,7 @@
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white" style="color:black !important"></h3>
                 <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -439,6 +443,7 @@
 
     <script>
         function showImage(imagePath, label) {
+            debugger;
             document.getElementById('modalImage').src = imagePath;
             document.getElementById('modalTitle').textContent = 'Incident: ' + label;
             document.getElementById('imageModal').classList.remove('hidden');
@@ -464,92 +469,7 @@
     </script>
 
 
-    @section Scripts {
-        <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-        <script>
-            // DataTables initialization and external filters
-            function showImage(imagePath, label) {
-                document.getElementById('modalImage').src = imagePath;
-                document.getElementById('modalTitle').textContent = 'Incident: ' + label;
-                document.getElementById('imageModal').classList.remove('hidden');
-            }
-
-            function closeModal() {
-                document.getElementById('imageModal').classList.add('hidden');
-            }
-
-            // Close modal when clicking outside
-            document.getElementById('imageModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
-
-            // Close modal with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
-            });
-
-            $(function(){
-                // Build unique options
-                function buildUniqueOptions(colIndex, selectId, placeholder){
-                    var set = new Set();
-                    $('#dtIncidents tbody tr').each(function(){
-                        var v = $(this).find('td').eq(colIndex).text().trim();
-                        if (v) set.add(v);
-                    });
-                    var $s = $(selectId); $s.empty(); $s.append('<option value="">'+placeholder+'</option>');
-                    Array.from(set).sort().forEach(function(v){ $s.append('<option>'+ $('<div>').text(v).html() +'</option>'); });
-                }
-                buildUniqueOptions(0, '#cameraFilter', 'All Cameras');
-                buildUniqueOptions(4, '#violationFilter', 'All Violations');
-
-                var dt = $('#dtIncidents').DataTable({
-                    paging: true,
-                    pageLength: 10, // show 10 by default
-                    info: false,
-                    searching: true, // enable programmatic filters
-                    lengthChange: false,
-                    order: [[5, 'desc']],
-                    dom: 't' // hide built-in controls (only table visible)
-                });
-
-                // Date range filter
-                $.fn.dataTable.ext.search.push(function(settings, data){
-                    if (settings.nTable.id !== 'dtIncidents') return true;
-                    var min = $('#fromDate').val();
-                    var max = $('#toDate').val();
-                    var dateStr = data[5] || '';
-                    if (!min && !max) return true;
-                    var rowDate = new Date(dateStr);
-                    if (isNaN(rowDate)) return true;
-                    if (min && rowDate < new Date(min + 'T00:00:00')) return false;
-                    if (max && rowDate > new Date(max + 'T23:59:59')) return false;
-                    return true;
-                });
-
-                $('#cameraFilter').on('change', function(){
-                    var v = this.value;
-                    dt.column(0).search(v ? '^'+$.fn.dataTable.util.escapeRegex(v)+'$' : '', true, false).draw();
-                });
-                $('#violationFilter').on('change', function(){
-                    var v = this.value;
-                    dt.column(4).search(v ? '^'+$.fn.dataTable.util.escapeRegex(v)+'$' : '', true, false).draw();
-                });
-                $('#fromDate,#toDate').on('change', function(){ dt.draw(); });
-                $('#clearFilters').on('click', function(){
-                    $('#cameraFilter').val('');
-                    $('#violationFilter').val('');
-                    $('#fromDate').val('');
-                    $('#toDate').val('');
-                    dt.search('').columns().search('').draw();
-                });
-            });
-        </script>
-    }
-
+  
 
 </body>
 

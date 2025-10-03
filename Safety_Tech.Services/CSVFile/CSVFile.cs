@@ -15,6 +15,7 @@ using System.ComponentModel;
 using OfficeOpenXml;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 using ClosedXML.Excel;
+using Microsoft.Extensions.Configuration;
 
 namespace Safety_Tech.Services.CSVFile
 {
@@ -24,14 +25,15 @@ namespace Safety_Tech.Services.CSVFile
     public class CSVFile : ICSVFile
     {
         private readonly IServiceScopeFactory _scopeFactory;
-
+        private readonly IConfiguration _configuration;
         /// <summary>
         /// Initializes a new instance of the <see cref="CSVFile"/> class.
         /// </summary>
         /// <param name="scopeFactory">The service scope factory.</param>
-        public CSVFile(IServiceScopeFactory scopeFactory)
+        public CSVFile(IServiceScopeFactory scopeFactory, IConfiguration configuration)
         {
             _scopeFactory = scopeFactory;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -72,8 +74,8 @@ namespace Safety_Tech.Services.CSVFile
                             Directory.CreateDirectory(processedImagesFolder);
 
                             // Render and update image paths
-                            var imagesFolder = @"D:\Images"; // set your folder path here
-                           var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                            var imagesFolder = _configuration["FolderPaths:ImageFolder"];
+                            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                             var incidentFolder = Path.Combine(wwwRootPath, "IncidentImages");
                             // Ensure processed folder exists
                             if (!Directory.Exists(incidentFolder))

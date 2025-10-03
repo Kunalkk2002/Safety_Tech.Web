@@ -9,6 +9,7 @@ using Safety_Tech.Models.Models;
 using Safety_Tech.Models.ViewModels;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace Safety_Tech.Web.Controllers
 {
@@ -31,8 +32,11 @@ namespace Safety_Tech.Web.Controllers
         {
             
             var Incidents = await _context.Incidents
-                   .OrderByDescending(x => x.Timestamp)
-                  .ToListAsync();
+                     .OrderByDescending(x => !x.IsApprove && x.ApproveBy == "") // first, true means not approved & empty ApproveBy
+                    .ThenByDescending(x => x.Timestamp) // then by timestamp descending
+                    .ThenBy(x => x.IsApprove)
+                    .ToListAsync();
+
             var viewModel = new IncidentViewModel
             {
                 Incidents = Incidents,
@@ -74,8 +78,9 @@ namespace Safety_Tech.Web.Controllers
             _context.Incidents.Update(incident); // optional, since tracked entity
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index), "Home");
+            return RedirectToAction(nameof(Details), "Incident");
         }
+
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -99,7 +104,7 @@ namespace Safety_Tech.Web.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index), "Home");
+            return RedirectToAction(nameof(Details), "Incident");
         }
 
         [HttpGet]

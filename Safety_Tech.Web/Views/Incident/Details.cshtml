@@ -175,8 +175,8 @@
         #grid .k-grid-header,
         #grid .k-grid-header th,
         #grid .k-table-th {
-            background-color: transparent !important;
-            color: black !important;
+            background-color: white !important;
+            color: rgb(107 114 128) !important;
             border-bottom: 1px solid #374151 !important; /* keep only bottom border */
             border-right: none !important; /* remove vertical white lines */
         }
@@ -206,13 +206,17 @@
         .k-grid-dark .k-grid-content::-webkit-scrollbar-track {
             background: #1e1e1e;
         }
+
+        .k-grid-header-menu{
+            color: rgb(107 114 128) !important;
+        }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
     <div class="p-6 md:p-8">
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
-                <h3 style="margin-bottom: 15px;">Recent Incidents</h3>
+                <h3 style="margin-bottom: 15px;">All Incidents</h3>
 
                 @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
                     .Name("grid")
@@ -267,7 +271,7 @@
                     .Pageable(pageable => pageable.PageSizes(true))
                     .Sortable()
                     .Filterable()
-                    .Scrollable()
+                    @* .Scrollable() *@
                     .HtmlAttributes(new { style = "auto" })
                     .DataSource(dataSource => dataSource
                     .Ajax()

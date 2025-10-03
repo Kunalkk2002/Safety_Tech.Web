@@ -14,6 +14,7 @@ namespace Safety_Tech.Models.ViewModels
         public int ConfirmIncidentsCount { get; set; }
         public int incidentsCurrentYear { get; set; }
         public int FrequencyDays { get; set; }
+        public int percentChange { get; set; }
 
         public List<string>? ViolationTypes { get; set; }
 

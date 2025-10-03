@@ -119,7 +119,8 @@ namespace Safety_Tech.Web.Controllers
                 ConfirmIncidentsCount = ConfirmIncidents.Count,
                 ViolationTypes = ViolationTypes,
                 incidentsCurrentYear = incidentsCurrentYear,
-                FrequencyDays = (int)Math.Round(frequencyThisYear, 1)
+                FrequencyDays = (int)Math.Round(frequencyThisYear, 1),
+                percentChange = (int)Math.Round(percentChange, 2)
             };
 
            

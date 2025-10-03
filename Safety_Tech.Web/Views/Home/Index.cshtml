@@ -226,9 +226,9 @@
         #grid .k-grid-header,
         #grid .k-grid-header th,
         #grid .k-table-th {
-            background-color: white !important;
-          
-            color: rgb(107 114 128) !important;
+            background-color: #2C3464 !important;
+            height: 50px;
+            line-height: 2;
             border-bottom: 1px solid #374151 !important; /* keep only bottom border */
             border-right: none !important; /* remove vertical white lines */
         }
@@ -239,6 +239,9 @@
             border-right: none !important;
         }
 
+        .k-column-title{
+            font-size:16px;
+        }
         /* Keep only horizontal separators */
         #grid .k-grid-content td,
         #grid .k-table td {
@@ -260,7 +263,7 @@
         }
 
         .k-grid-header-menu {
-            color: rgb(107 114 128) !important;
+            color: white !important;
         }
     </style>
     <!-- DataTables CSS -->
@@ -305,7 +308,7 @@
                     <p class="text-5xl font-bold mt-2 text-right">@Model.FrequencyDays d</p>
                     <div class="flex items-center justify-end mt-1">
                         <span class="material-icons text-green-500 text-base">arrow_downward</span>
-                        <p class="text-sm text-green-500 ml-1">23% v last year</p>
+                        <p class="text-sm text-green-500 ml-1">@Model.percentChange % v last year</p>
                     </div>
                 </div>
             </div>

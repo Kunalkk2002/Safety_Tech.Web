@@ -53,20 +53,20 @@
     </script>
     <style>
         /* :root {
-                  --color-primary: #6366F1;
-                  --color-background-light: #F3F4F6;
-                  --color-background-dark: #1F2937;
-                  --color-card-light: #FFFFFF;
-                  --color-card-dark: #374151;
-                  --color-text-light: #111827;
-                  --color-text-dark: #F9FAFB;
-                  --color-text-secondary-light: #6B7280;
-                  --color-text-secondary-dark: #9CA3AF;
-                  --color-danger: #EF4444;
+                          --color-primary: #6366F1;
+                          --color-background-light: #F3F4F6;
+                          --color-background-dark: #1F2937;
+                          --color-card-light: #FFFFFF;
+                          --color-card-dark: #374151;
+                          --color-text-light: #111827;
+                          --color-text-dark: #F9FAFB;
+                          --color-text-secondary-light: #6B7280;
+                          --color-text-secondary-dark: #9CA3AF;
+                          --color-danger: #EF4444;
 
-                  --font-sans: 'Inter', sans-serif;
-                  --radius-lg: 0.75rem;
-                } */
+                          --font-sans: 'Inter', sans-serif;
+                          --radius-lg: 0.75rem;
+                        } */
 
         body {
             font-family: 'Inter', sans-serif;
@@ -86,7 +86,7 @@
             color: white !important;
         }
 
-            /* Grid container */
+        /* Grid container */
         #grid {
             background-color: #222A51;
             border-radius: 0.75rem;
@@ -110,15 +110,15 @@
                 border-color: #374151 !important;
             }
 
-            /* Filter row inputs */
-            #grid .k-grid-header .k-textbox,
-            #grid .k-grid-header .k-dropdown,
-            #grid .k-grid-header .k-picker-wrap,
-            #grid .k-grid-header .k-input-inner {
-                background-color: #374151 !important;
-                color: white !important;
-                border-color: #4B5563 !important;
-            }
+                /* Filter row inputs */
+                #grid .k-grid-header .k-textbox,
+                #grid .k-grid-header .k-dropdown,
+                #grid .k-grid-header .k-picker-wrap,
+                #grid .k-grid-header .k-input-inner {
+                    background-color: #374151 !important;
+                    color: white !important;
+                    border-color: #4B5563 !important;
+                }
 
             /* Hide Kendo clear (cross) buttons inside filter inputs */
             #grid .k-input-button,
@@ -163,18 +163,53 @@
                 color: white !important;
             }
 
-                #grid .k-pager .k-link { color: white !important; }
+                #grid .k-pager .k-link {
+                    color: white !important;
+                }
 
         /* Buttons inside grid */
-        .k-button { border-radius: 0.75rem !important; font-size: 0.875rem; font-weight: 500; }
-        .btn-approve { background-color: #16A34A; color: white; }
-        .btn-reject { background-color: #DC2626; color: white; }
-        .btn-view { background-color: #2563EB; color: white; }
-        .btn-approve, .btn-reject, .btn-view { padding: 4px 12px; border: 0; display: inline-block; }
-        a.k-button.btn-view { text-decoration: none; }
-        .btn-approve:hover { background-color: #15803D; }
-        .btn-reject:hover { background-color: #B91C1C; }
-        .btn-view:hover { background-color: #1D4ED8; }
+        .k-button {
+            border-radius: 0.75rem !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-approve {
+            background-color: #16A34A;
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: #DC2626;
+            color: white;
+        }
+
+        .btn-view {
+            background-color: #2563EB;
+            color: white;
+        }
+
+        .btn-approve, .btn-reject, .btn-view {
+            padding: 4px 12px;
+            border: 0;
+            display: inline-block;
+        }
+
+        a.k-button.btn-view {
+            text-decoration: none;
+        }
+
+        .btn-approve:hover {
+            background-color: #15803D;
+        }
+
+        .btn-reject:hover {
+            background-color: #B91C1C;
+        }
+
+        .btn-view:hover {
+            background-color: #1D4ED8;
+        }
 
         /* Make sure the grid draws horizontal separators */
         #grid .k-table td,
@@ -244,7 +279,7 @@
                     </div>
                 </div>
                 <!-- Filters -->
-               @*  <div class="flex flex-wrap items-center gap-3 mb-4">
+                @*  <div class="flex flex-wrap items-center gap-3 mb-4">
                     <span class="text-sm opacity-80">Total: @((Model?.Incidents?.Count ?? 0))</span>
                     <select id="cameraFilter" style="width: 220px;color:black;"></select>
                     <select id="violationFilter" style="width: 220px;color:black;"></select>
@@ -323,23 +358,25 @@
                         .Width(260)
 
                         .ClientTemplate(
-                                @"<div style='display:flex;gap:6px;align-items:center;'>
-                            <form method='post' action='/Incident/Approve'>
-                            <input type='hidden' name='incidentId' value='#= Id #' />
-                            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-                            <button type='submit' class='k-button btn-approve'>Approve</button>
-                            </form>
-                            <form method='post' action='/Incident/Reject'>
-                            <input type='hidden' name='incidentId' value='#= Id #' />
-                            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-                            <button type='submit' class='k-button btn-reject'>Reject</button>
-                            </form>
-                            <a href='/Incident/Details/#= Id #' class='k-button btn-view'>View</a>
-                            </div>"
-                                    )
+                    @"<div style='display:flex;gap:6px;align-items:center;'>
+                <form method='post' action='/Incident/Approve'>
+                <input type='hidden' name='incidentId' value='#= Id #' />
+                <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                <button type='submit' class='k-button btn-approve'>Approve</button>
+                </form>
+                <form method='post' action='/Incident/Reject'>
+                <input type='hidden' name='incidentId' value='#= Id #' />
+                <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                <button type='submit' class='k-button btn-reject'>Reject</button>
+                </form>
+                <a href='javascript:void(0);'
+                class='k-button btn-view'
+                onclick=""showImage('#= Image #', '#= Id #')"">View</a>
+                </div>"
+                        )
                         .Filterable(false);
                     })
-                    
+
                     .Sortable()
                     .Scrollable(s => s.Enabled(false))
                     .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
@@ -411,7 +448,9 @@
                 </button>
             </div>
             <div class="text-center">
-                <img id="modalImage" src="" alt="Incident Image" class="max-w-full max-h-[70vh] mx-auto rounded-lg shadow-lg" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4='; this.alt='Image not found';">
+                <img id="modalImage" src="" alt="Incident Image"
+                     class="max-w-full max-h-[70vh] mx-auto rounded-lg shadow-lg"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4='; this.alt='Image not found';">
             </div>
         </div>
     </div>
@@ -428,20 +467,20 @@
         }
 
         // Close modal when clicking outside
-        document.getElementById('imageModal').addEventListener('click', function(e) {
+        document.getElementById('imageModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeModal();
             }
         });
 
         // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 closeModal();
             }
         });
-
     </script>
+
 
     @section Scripts {
         <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>

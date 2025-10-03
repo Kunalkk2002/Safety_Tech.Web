@@ -72,28 +72,38 @@ namespace Safety_Tech.Services.CSVFile
                             Directory.CreateDirectory(processedImagesFolder);
 
                             // Render and update image paths
-                            //foreach (var item in items)
-                            //{
-                            //    var imagePath = item.Image;
-                            //    if (!string.IsNullOrWhiteSpace(imagePath))
-                            //    {
-                            //        if (!Path.IsPathRooted(imagePath))
-                            //        {
-                            //            var csvDir = Path.GetDirectoryName(file) ?? string.Empty;
-                            //            imagePath = Path.Combine(csvDir, imagePath);
-                            //        }
+                            var imagesFolder = @"D:\Images"; // set your folder path here
+                           var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                            var incidentFolder = Path.Combine(wwwRootPath, "IncidentImages");
+                            // Ensure processed folder exists
+                            if (!Directory.Exists(incidentFolder))
+                            {
+                                Directory.CreateDirectory(incidentFolder);
+                            }
 
-                            //        var savedPath = DrawBoundingBoxAndSave(
-                            //            imagePath,
-                            //            item.XMin, item.YMin, item.XMax, item.YMax,
-                            //            processedImagesFolder);
+                            foreach (var item in items)
+                            {
+                                var imageName = Path.GetFileName(item.Image); // just the file name
+                                if (!string.IsNullOrWhiteSpace(imageName))
+                                {
+                                    var destPath = Path.Combine(incidentFolder, imageName);
 
-                            //        if (!string.IsNullOrWhiteSpace(savedPath))
-                            //        {
-                            //            item.Image = savedPath;
-                            //        }
-                            //    }
-                            //}
+                                    // Copy image into wwwroot/IncidentImages (overwrite if exists)
+                                    if (!File.Exists(destPath))
+                                    {
+                                        // if image is coming from another source path
+                                        var sourcePath = Path.Combine(imagesFolder, imageName);
+
+                                        if (File.Exists(sourcePath))
+                                        {
+                                            File.Copy(sourcePath, destPath, true);
+                                        }
+                                    }
+
+                                    //Store relative path in DB
+                                    item.Image = $"/IncidentImages/{imageName}";
+                                }
+                            }
 
                             using var scope = _scopeFactory.CreateScope();
                             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataContext>();
@@ -169,7 +179,7 @@ namespace Safety_Tech.Services.CSVFile
                         MissingLabels = columns[5]?.Trim() ?? string.Empty,
                         ViolationType = columns[6]?.Trim() ?? string.Empty,
 
-                        //Image = columns[7]?.Trim() ?? string.Empty,
+                        Image = columns[7]?.Trim() ?? string.Empty,
                         //XMin = ParseDouble(columns[8]?.Trim()),
                         //YMin = ParseDouble(columns[9]?.Trim()),
                         //XMax = ParseDouble(columns[10]?.Trim()),
@@ -199,7 +209,8 @@ namespace Safety_Tech.Services.CSVFile
                         Timestamp = timestamp,
                         TrackId = worksheet.Cell(row, 5).GetValue<string>()?.Trim() ?? string.Empty,
                         MissingLabels = worksheet.Cell(row, 6).GetValue<string>()?.Trim() ?? string.Empty,
-                        ViolationType = worksheet.Cell(row, 7).GetValue<string>()?.Trim() ?? string.Empty
+                        ViolationType = worksheet.Cell(row, 7).GetValue<string>()?.Trim() ?? string.Empty,
+                        Image = worksheet.Cell(row, 8).GetValue<string>()?.Trim() ?? string.Empty,
                     });
                 }
 

@@ -11,7 +11,7 @@ public partial class Incidents
     [Key]
     public Guid Id { get; set; }
 
-    //public string? Image { get; set; }
+    public string? Image { get; set; }
 
     //public string? Label { get; set; }
 

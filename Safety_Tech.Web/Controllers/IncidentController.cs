@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Safety_Tech.DTOs.incidents;
 using Safety_Tech.Models.Models;
 using Safety_Tech.Models.ViewModels;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
 
 namespace Safety_Tech.Web.Controllers
 {
@@ -27,10 +29,8 @@ namespace Safety_Tech.Web.Controllers
 
         public async Task<IActionResult> DetailsAsync()
         {
-            var PotentialInsidents = _context.Incidents.Count();
-
+            
             var Incidents = await _context.Incidents
-                  .Where(x => !x.IsApprove)
                   .ToListAsync();
 
             var potentialIncidentsCount = _context.Incidents
@@ -45,6 +45,14 @@ namespace Safety_Tech.Web.Controllers
        
             return View(viewModel);
         }
+
+        public IActionResult Incidents_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var data = _context.Incidents.ToList(); // or filtered query
+            var result = data.ToDataSourceResult(request);
+            return Json(result);
+        }
+
 
         [HttpPost]
         //[ValidateAntiForgeryToken]

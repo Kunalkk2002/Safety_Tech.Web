@@ -198,23 +198,32 @@
                    .Width(260)
 
             .ClientTemplate(
-                        @"<div style='display:flex;gap:6px;align-items:center;'>
-                    <form method='post' action='/Incident/Approve'>
-                    <input type='hidden' name='incidentId' value='#= Id #' />
-                    <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-                    <button type='submit' class='k-button btn-approve'>Approve</button>
-                    </form>
-                    <form method='post' action='/Incident/Reject'>
-                    <input type='hidden' name='incidentId' value='#= Id #' />
-                    <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-                    <button type='submit' class='k-button btn-reject'>Reject</button>
-                    </form>
-                    <a href='/Incident/Details/#= Id #' class='k-button btn-view'>View</a>
-                    </div>"
-                            )
-                   .Filterable(false);
+                @"<div style='display:flex;gap:6px;align-items:center;'>
+    # if (!IsApprove && ApproveBy === '' ) { #
+            <form method='post' action='/Incident/Approve'>
+            <input type='hidden' name='incidentId' value='#= Id #' />
+            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+            <button type='submit' class='k-button btn-approve'>Approve</button>
+            </form>
+            <form method='post' action='/Incident/Reject'>
+            <input type='hidden' name='incidentId' value='#= Id #' />
+            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+            <button type='submit' class='k-button btn-reject'>Reject</button>
+            </form>
+      # } else if(IsApprove) { #
+    <span style='color:green;font-weight:400;'>Approve</span>
+            # }
+    else{ #
+    <span style='color:red;font-weight:400;'>Reject</span>
+    # }#
+    <a href='javascript:void(0);'
+    class='k-button btn-view'
+    onclick=""showImage('#= Image #', '#= Id #')"">View</a>
+            </div>"
+            )
+            .Filterable(false);
         })
-        .Height(800)
+        .Height("auto")
         .Pageable(pageable => pageable.PageSizes(true))
         .Sortable()
         .Filterable()
@@ -227,5 +236,51 @@
         )
         .BindTo(Model.Incidents)
     )
+
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-center">
+                <img id="modalImage" src="" alt="Incident Image"
+                     class="max-w-full max-h-[70vh] mx-auto rounded-lg shadow-lg"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4='; this.alt='Image not found';">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showImage(imagePath, label) {
+            document.getElementById('modalImage').src = imagePath;
+            document.getElementById('modalTitle').textContent = 'Incident: ' + label;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>

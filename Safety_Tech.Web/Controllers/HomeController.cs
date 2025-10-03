@@ -51,7 +51,7 @@ namespace Safety_Tech.Web.Controllers
             var PotentialInsidents = _context.Incidents.Count();
 
             var Incidents = await _context.Incidents
-                .Where(x => !x.IsApprove)
+                .Where(x => !x.IsApprove && x.ApproveBy == "")
                 .ToListAsync();
 
             var ConfirmIncidents = await _context.Incidents

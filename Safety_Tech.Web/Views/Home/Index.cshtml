@@ -221,6 +221,42 @@
         #grid .k-table tr:last-child td {
             border-bottom: none !important;
         }
+
+        /* Transparent header */
+        #grid .k-grid-header,
+        #grid .k-grid-header th,
+        #grid .k-table-th {
+            background-color: transparent !important;
+            color: black !important;
+            border-bottom: 1px solid #374151 !important; /* keep only bottom border */
+            border-right: none !important; /* remove vertical white lines */
+        }
+
+        /* Remove vertical grid lines inside body cells */
+        #grid .k-grid-content td,
+        #grid .k-table td {
+            border-right: none !important;
+        }
+
+        /* Keep only horizontal separators */
+        #grid .k-grid-content td,
+        #grid .k-table td {
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+
+
+        .k-grid-dark .k-grid-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .k-grid-dark .k-grid-content::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        .k-grid-dark .k-grid-content::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
     </style>
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
@@ -278,62 +314,7 @@
                         </a>
                     </div>
                 </div>
-                <!-- Filters -->
-                @*  <div class="flex flex-wrap items-center gap-3 mb-4">
-                    <span class="text-sm opacity-80">Total: @((Model?.Incidents?.Count ?? 0))</span>
-                    <select id="cameraFilter" style="width: 220px;color:black;"></select>
-                    <select id="violationFilter" style="width: 220px;color:black;"></select>
-                    <input id="fromDate" type="date" style="width: 180px;color:black;" />
-                    <input id="toDate" type="date" style="width: 180px;color:black;" />
-                    <button id="clearFilters" class="px-3 py-1 text-sm font-medium rounded bg-gray-200 text-gray-800 hover:bg-gray-300">Clear</button>
-                </div>
-                <div id="grid" class="hidden"></div>
-                <div id="gridError" class="mt-2 text-red-400 text-sm"></div>
-                <div id="fallbackTable" class="overflow-x-auto">
-                    <table id="dtIncidents" class="w-full text-left display">
-                        <thead>
-                            <tr class="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase">
-                                <th class="py-3 px-4 font-medium">Camera Name</th>
-                                <th class="py-3 px-4 font-medium">Camera Id</th>
-                                <th class="py-3 px-4 font-medium">Track Id</th>
-                                <th class="py-3 px-4 font-medium">Missing Labels</th>
-                                <th class="py-3 px-4 font-medium">Violation Type</th>
-                                <th class="py-3 px-4 font-medium">Date</th>
-                                <th class="py-3 px-4 font-medium">Actions</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var i in Model.Incidents)
-                            {
-                                <tr class="text-sm">
-                                    <td class="py-3 px-4">@i.CameraName</td>
-                                    <td class="py-3 px-4">@i.CameraId</td>
-                                    <td class="py-3 px-4">@i.TrackId</td>
-                                    <td class="py-3 px-4">@i.MissingLabels</td>
-                                    <td class="py-3 px-4">@i.ViolationType</td>
-                                    <td class="py-3 px-4">@i.Timestamp</td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex gap-2">
-                                            <form asp-controller="Incident" asp-action="Approve" method="post">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="incidentId" value="@i.Id" />
-                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-green-600 text-white hover:bg-green-700">Approve</button>
-                                            </form>
-                                            <form asp-controller="Incident" asp-action="Reject" method="post">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="incidentId" value="@i.Id" />
-                                                <button type="submit" class="px-3 py-1 text-sm font-medium rounded-full bg-red-600 text-white hover:bg-red-700">Reject</button>
-                                            </form>
-                                            <button type="button" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700">View</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div> *@
-
+            
                 @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
                     .Name("grid")
                     .Columns(columns =>
@@ -358,31 +339,32 @@
                         .Width(260)
 
                         .ClientTemplate(
-                    @"<div style='display:flex;gap:6px;align-items:center;'>
-                <form method='post' action='/Incident/Approve'>
-                <input type='hidden' name='incidentId' value='#= Id #' />
-                <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-                <button type='submit' class='k-button btn-approve'>Approve</button>
-                </form>
-                <form method='post' action='/Incident/Reject'>
-                <input type='hidden' name='incidentId' value='#= Id #' />
-                <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-                <button type='submit' class='k-button btn-reject'>Reject</button>
-                </form>
-                <a href='javascript:void(0);'
-                class='k-button btn-view'
-                onclick=""showImage('#= Image #', '#= Id #')"">View</a>
-                </div>"
+                                @"<div style='display:flex;gap:6px;align-items:center;'>
+                            <form method='post' action='/Incident/Approve'>
+                            <input type='hidden' name='incidentId' value='#= Id #' />
+                            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                            <button type='submit' class='k-button btn-approve'>Approve</button>
+                            </form>
+                            <form method='post' action='/Incident/Reject'>
+                            <input type='hidden' name='incidentId' value='#= Id #' />
+                            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                            <button type='submit' class='k-button btn-reject'>Reject</button>
+                            </form>
+                            <a href='javascript:void(0);'
+                            class='k-button btn-view'
+                            onclick=""showImage('#= Image #', '#= Id #')"">View</a>
+                            </div>"
                         )
                         .Filterable(false);
                     })
-
+                    .Height("auto")
                     .Sortable()
-                    .Scrollable(s => s.Enabled(false))
-                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                    .Filterable()
+                    .Scrollable()
                     .HtmlAttributes(new { style = "auto" })
                     .DataSource(dataSource => dataSource
                     .Ajax()
+                    .PageSize(15)
                     .ServerOperation(false)
                     )
                     .BindTo(Model.Incidents.Take(10))

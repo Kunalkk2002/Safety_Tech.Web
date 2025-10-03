@@ -51,6 +51,7 @@ namespace Safety_Tech.Web.Controllers
             var PotentialInsidents = _context.Incidents.Count();
 
             var Incidents = await _context.Incidents
+                  .OrderByDescending(x => x.Timestamp)
                 .Where(x => !x.IsApprove && x.ApproveBy == "")
                 .ToListAsync();
 

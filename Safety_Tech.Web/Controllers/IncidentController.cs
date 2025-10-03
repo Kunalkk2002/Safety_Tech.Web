@@ -31,11 +31,8 @@ namespace Safety_Tech.Web.Controllers
         {
             
             var Incidents = await _context.Incidents
+                   .OrderByDescending(x => x.Timestamp)
                   .ToListAsync();
-
-            var potentialIncidentsCount = _context.Incidents
-                .Count();
-
             var viewModel = new IncidentViewModel
             {
                 Incidents = Incidents,

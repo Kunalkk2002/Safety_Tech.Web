@@ -7,16 +7,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dark Themed Kendo UI Grid</title>
-
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <!-- Kendo UI CSS (match ASP.NET Core MVC wrapper version) -->
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.117/styles/kendo.default-v2.min.css" />
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Kendo UI JS (match version) -->
-    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script> 
-   
- 
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+
+
     <!-- Kendo ASP.NET MVC wrappers helper (provides kendo.syncReady) -->
     <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.aspnetmvc.min.js"></script>
 
@@ -61,15 +64,15 @@
                 border-color: #374151 !important;
             }
 
-            /* Filter row inputs */
-            #grid .k-grid-header .k-textbox,
-            #grid .k-grid-header .k-dropdown,
-            #grid .k-grid-header .k-picker-wrap,
-            #grid .k-grid-header .k-input-inner {
-                background-color: #374151 !important;
-                color: white !important;
-                border-color: #4B5563 !important;
-            }
+                /* Filter row inputs */
+                #grid .k-grid-header .k-textbox,
+                #grid .k-grid-header .k-dropdown,
+                #grid .k-grid-header .k-picker-wrap,
+                #grid .k-grid-header .k-input-inner {
+                    background-color: #374151 !important;
+                    color: white !important;
+                    border-color: #4B5563 !important;
+                }
 
             /* Hide Kendo clear (cross) buttons inside filter inputs */
             #grid .k-input-button,
@@ -109,18 +112,53 @@
                 color: white !important;
             }
 
-                #grid .k-pager .k-link { color: white !important; }
+                #grid .k-pager .k-link {
+                    color: white !important;
+                }
 
         /* Buttons inside grid */
-        .k-button { border-radius: 0.75rem !important; font-size: 0.875rem; font-weight: 500; }
-        .btn-approve { background-color: #16A34A; color: white; }
-        .btn-reject { background-color: #DC2626; color: white; }
-        .btn-view { background-color: #2563EB; color: white; }
-        .btn-approve, .btn-reject, .btn-view { padding: 4px 12px; border: 0; display: inline-block; }
-        a.k-button.btn-view { text-decoration: none; }
-        .btn-approve:hover { background-color: #15803D; }
-        .btn-reject:hover { background-color: #B91C1C; }
-        .btn-view:hover { background-color: #1D4ED8; }
+        .k-button {
+            border-radius: 0.75rem !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-approve {
+            background-color: #16A34A;
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: #DC2626;
+            color: white;
+        }
+
+        .btn-view {
+            background-color: #2563EB;
+            color: white;
+        }
+
+        .btn-approve, .btn-reject, .btn-view {
+            padding: 4px 12px;
+            border: 0;
+            display: inline-block;
+        }
+
+        a.k-button.btn-view {
+            text-decoration: none;
+        }
+
+        .btn-approve:hover {
+            background-color: #15803D;
+        }
+
+        .btn-reject:hover {
+            background-color: #B91C1C;
+        }
+
+        .btn-view:hover {
+            background-color: #1D4ED8;
+        }
 
         /* Make sure the grid draws horizontal separators */
         #grid .k-table td,
@@ -170,72 +208,79 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+    <div class="p-6 md:p-8">
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="col-span-1 md:col-span-2 lg:col-span-4 bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-md stats-cards">
+                <h3 style="margin-bottom: 15px;">Recent Incidents</h3>
 
-    <h3 style="margin-bottom: 15px;">Recent Incidents</h3>
+                @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.CameraName)
+                        .Title("Camera Name")
+                        .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
+                        columns.Bound(p => p.ViolationType)
+                        .Title("Violation Type")
+                        .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
+                        columns.Bound(p => p.Timestamp)
+                        .Title("Date")
+                        .Format("{0:yyyy-MM-dd}")
+                        .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(true)));
 
-    @(Html.Kendo().Grid<Safety_Tech.Models.Models.Incidents>()
-        .Name("grid")
-        .Columns(columns =>
-        {
-            columns.Bound(p => p.CameraName)
-                   .Title("Camera Name")
-                   .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
-            columns.Bound(p => p.ViolationType)
-                   .Title("Violation Type")
-                   .Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains)));
-            columns.Bound(p => p.Timestamp)
-                .Title("Date")
-                .Format("{0:yyyy-MM-dd}")
-                .Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(true)));
+                        columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
+                        columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
+                        columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
+                        columns.Bound(p => p.Id)
+                        .Title("Actions")
+                        .Encoded(false)
+                        .Width(260)
 
-            columns.Bound(p => p.CameraId).Title("Camera Id").Filterable(false);
-            columns.Bound(p => p.TrackId).Title("Track Id").Filterable(false);
-            columns.Bound(p => p.MissingLabels).Title("Missing Labels").Filterable(false);
-            columns.Bound(p => p.Id)
-                   .Title("Actions")
-                   .Encoded(false)
-                   .Width(260)
+                        .ClientTemplate(
+                    @"<div style='display:flex;gap:6px;align-items:center;'>
+                # if (!IsApprove && ApproveBy === '' ) { #
+                <form method='post' action='/Incident/Approve'>
+                <input type='hidden' name='incidentId' value='#= Id #' />
+                <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                <button type='submit' class='k-button btn-approve'>Approve</button>
+                </form>
+                <form method='post' action='/Incident/Reject'>
+                <input type='hidden' name='incidentId' value='#= Id #' />
+                <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
+                <button type='submit' class='k-button btn-reject'>Reject</button>
+                </form>
+                # } else if(IsApprove) { #
+                <span style='color:green;font-weight:400;'>Approve</span>
+                # }
+                else{ #
+                <span style='color:red;font-weight:400;'>Reject</span>
+                # }#
+                <a href='javascript:void(0);'
+                class='k-button btn-view'
+                onclick=""showImage('#= Image #', '#= CameraName #')"">View</a>
+                </div>"
+                        )
+                        .Filterable(false);
+                    })
+                    .Height("auto")
+                    .Pageable(pageable => pageable.PageSizes(true))
+                    .Sortable()
+                    .Filterable()
+                    .Scrollable()
+                    .HtmlAttributes(new { style = "auto" })
+                    .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .PageSize(15)
+                    .ServerOperation(false)
+                    )
+                    .BindTo(Model.Incidents)
+                    )
+             </div>
+        </main>
+    </div>
+    
 
-            .ClientTemplate(
-                @"<div style='display:flex;gap:6px;align-items:center;'>
-    # if (!IsApprove && ApproveBy === '' ) { #
-            <form method='post' action='/Incident/Approve'>
-            <input type='hidden' name='incidentId' value='#= Id #' />
-            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-            <button type='submit' class='k-button btn-approve'>Approve</button>
-            </form>
-            <form method='post' action='/Incident/Reject'>
-            <input type='hidden' name='incidentId' value='#= Id #' />
-            <input type='hidden' name='__RequestVerificationToken' value='@Html.AntiForgeryToken().ToString()' />
-            <button type='submit' class='k-button btn-reject'>Reject</button>
-            </form>
-      # } else if(IsApprove) { #
-    <span style='color:green;font-weight:400;'>Approve</span>
-            # }
-    else{ #
-    <span style='color:red;font-weight:400;'>Reject</span>
-    # }#
-    <a href='javascript:void(0);'
-    class='k-button btn-view'
-    onclick=""showImage('#= Image #', '#= Id #')"">View</a>
-            </div>"
-            )
-            .Filterable(false);
-        })
-        .Height("auto")
-        .Pageable(pageable => pageable.PageSizes(true))
-        .Sortable()
-        .Filterable()
-        .Scrollable()
-        .HtmlAttributes(new { style = "auto" })
-        .DataSource(dataSource => dataSource
-            .Ajax()
-            .PageSize(15)
-            .ServerOperation(false)
-        )
-        .BindTo(Model.Incidents)
-    )
 
 
     <!-- Image Modal -->
@@ -282,5 +327,6 @@
             }
         });
     </script>
+
 </body>
 </html>
